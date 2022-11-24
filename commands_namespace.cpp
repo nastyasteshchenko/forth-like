@@ -70,7 +70,7 @@ namespace {
             it++;
             auto cl_quote_it = std::find_if(it, end, [](char c) { return c == '"'; });
             if (cl_quote_it == end) {
-                throw interpreter_error("no closing quotation mark for 'while' loop");
+                throw interpreter_error("no closing quotation mark for print string");
             }
             std::stringstream ss;
             for (; it != cl_quote_it; it++) {
