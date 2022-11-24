@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-void Plus::apply(data &it, std::stringstream &buf) const {
+void Plus::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -18,7 +18,7 @@ void Plus::apply(data &it, std::stringstream &buf) const {
     it.push(sum);
 }
 
-void Minus::apply(data &it, std::stringstream &buf) const {
+void Minus::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -33,7 +33,7 @@ void Minus::apply(data &it, std::stringstream &buf) const {
     it.push(sub);
 }
 
-void Mul::apply(data &it, std::stringstream &buf) const {
+void Mul::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -48,7 +48,7 @@ void Mul::apply(data &it, std::stringstream &buf) const {
     it.push(mul);
 }
 
-void Dev::apply(data &it, std::stringstream &buf) const {
+void Dev::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -67,7 +67,7 @@ void Dev::apply(data &it, std::stringstream &buf) const {
     it.push(dev);
 }
 
-void Mod::apply(data &it, std::stringstream &buf) const {
+void Mod::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -82,7 +82,7 @@ void Mod::apply(data &it, std::stringstream &buf) const {
     it.push(mod);
 }
 
-void Equal::apply(data &it, std::stringstream &buf) const {
+void Equal::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -90,7 +90,7 @@ void Equal::apply(data &it, std::stringstream &buf) const {
         it.pop();
         throw interpreter_error("stack have only one element");
     }
-    int eq = it.top();
+    const int eq = it.top();
     it.pop();
     if (eq == it.top()) {
         it.pop();
@@ -101,7 +101,7 @@ void Equal::apply(data &it, std::stringstream &buf) const {
     }
 }
 
-void Less::apply(data &it, std::stringstream &buf) const {
+void Less::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -109,7 +109,7 @@ void Less::apply(data &it, std::stringstream &buf) const {
         it.pop();
         throw interpreter_error("stack have only one element");
     }
-    int eq = it.top();
+    const int eq = it.top();
     it.pop();
     if (eq > it.top()) {
         it.pop();
@@ -120,7 +120,7 @@ void Less::apply(data &it, std::stringstream &buf) const {
     }
 }
 
-void Greater::apply(data &it, std::stringstream &buf) const {
+void Greater::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -128,7 +128,7 @@ void Greater::apply(data &it, std::stringstream &buf) const {
         it.pop();
         throw interpreter_error("stack have only one element");
     }
-    int eq = it.top();
+    const int eq = it.top();
     it.pop();
     if (eq < it.top()) {
         it.pop();
@@ -139,14 +139,14 @@ void Greater::apply(data &it, std::stringstream &buf) const {
     }
 }
 
-void Dup::apply(data &it, std::stringstream &buf) const {
+void Dup::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
     it.push(it.top());
 }
 
-void Drop::apply(data &it, std::stringstream &buf) const {
+void Drop::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -161,22 +161,22 @@ void Print::apply(data &it, std::stringstream &buf) const {
     it.pop();
 }
 
-void Swap::apply(data &it, std::stringstream &buf) const {
+void Swap::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
     if (it.size() == 1) {
         throw interpreter_error("stack have only one element");
     }
-    int tmp1 = it.top();
+    const int tmp1 = it.top();
     it.pop();
-    int tmp2 = it.top();
+    const int tmp2 = it.top();
     it.pop();
     it.push(tmp1);
     it.push(tmp2);
 }
 
-void Rot::apply(data &it, std::stringstream &buf) const {
+void Rot::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -186,27 +186,27 @@ void Rot::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 3) {
         throw interpreter_error("stack have only two elements");
     }
-    int tmp1 = it.top();
+    const int tmp1 = it.top();
     it.pop();
-    int tmp2 = it.top();
+    const int tmp2 = it.top();
     it.pop();
-    int tmp3 = it.top();
+    const int tmp3 = it.top();
     it.pop();
     it.push(tmp1);
     it.push(tmp3);
     it.push(tmp2);
 }
 
-void Over::apply(data &it, std::stringstream &buf) const {
+void Over::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
     if (it.size() == 1) {
         throw interpreter_error("stack have only one element");
     }
-    int tmp1 = it.top();
+    const int tmp1 = it.top();
     it.pop();
-    int tmp2 = it.top();
+    const int tmp2 = it.top();
     it.pop();
     it.push(tmp2);
     it.push(tmp1);

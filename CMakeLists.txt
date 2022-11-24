@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_options(-fsanitize=address)
 add_link_options(-fsanitize=address)
 
-add_executable(forth main.cpp commands_namespace.cpp commands.cpp interpreter.cpp)
+add_executable(forth main.cpp commands_namespace.cpp commands.cpp interpreter.cpp smart_pointer.h)
 
 add_executable(forth_test commands_namespace.cpp forth_test.cpp commands.cpp interpreter.cpp)
 

@@ -32,18 +32,17 @@ Interpreter::getAndApplyCommands(const std::string::const_iterator &begin, const
             throw interpreter_error(strError.str());
         }
         creator_t creator = (*creator_it).second;
-        Command *cmd = creator(it, end);
-        cmd->apply(it_, buf_);
-        delete cmd;
+        SmartPointer<Command> cmd = creator(it, end);
+        (*cmd).apply(it_, buf_);
     }
 }
 
 void Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     try {
-        buf_.clear();
+        buf_.str("");
         getAndApplyCommands(begin, end);
         if (!buf_.str().empty()) {
-            std::cout <<"< "<< buf_.str() << std::endl;
+            std::cout << "< " << buf_.str() << std::endl;
         } else {
             std::cout << "< ok" << std::endl;
         }

@@ -7,13 +7,15 @@
 #include "data.h"
 #include <unordered_map>
 #include <sstream>
+#include "smart_pointer.h"
 
 class Interpreter {
 public:
 
-    typedef std::function<Command *(std::string::const_iterator &, const std::string::const_iterator &)> creator_t;
+    typedef std::function<SmartPointer<Command>(std::string::const_iterator &,
+                                                const std::string::const_iterator &)> creator_t;
 
-     static Interpreter &getInstance();
+    static Interpreter &getInstance();
 
     bool registerCreator(const creator_t &creator, const std::string &c);
 

@@ -16,7 +16,7 @@ public:
         return stack_.top();
     }
 
-    void push(int val) {
+    void push(const int val) {
         stack_.push(val);
     }
 
