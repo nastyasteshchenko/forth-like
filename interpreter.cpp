@@ -1,10 +1,5 @@
-#pragma once
-
-#include <sstream>
-#include <iostream>
-#include "interpreter_error.h"
-#include <string>
 #include "interpreter.h"
+#include "interpreter_error.h"
 
 Interpreter &Interpreter::getInstance() {
     static Interpreter i;
@@ -16,14 +11,12 @@ bool Interpreter::registerCreator(const creator_t &creator, const std::string &c
     return true;
 }
 
-void Interpreter::getAndApplyCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
-    int countPrintCmds = 0;
+void
+Interpreter::getAndApplyCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     for (auto it = begin; it < end; it++) {
         std::stringstream ss;
         for (; *it != ' ' && *it != '\0'; it++) {
-            if (*it == '\"') {
-                break;
-            }
+            if (*it == '\"') break;
             ss << *it;
         }
         char *e;
@@ -38,23 +31,22 @@ void Interpreter::getAndApplyCommands(const std::string::const_iterator &begin, 
             strError << "no such command : '" << ss.str() << "'";
             throw interpreter_error(strError.str());
         }
-        if (ss.str() == "." || ss.str() == "cr" || ss.str() == "emit" || ss.str() == "if") {
-            countPrintCmds++;
-        }
         creator_t creator = (*creator_it).second;
         Command *cmd = creator(it, end);
-        cmd->apply(it_);
+        cmd->apply(it_, buf_);
         delete cmd;
-    }
-    if (countPrintCmds == 0) {
-        std::cout << "< ";
-        std::cout << "ok" << std::endl;
     }
 }
 
 void Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     try {
+        buf_.clear();
         getAndApplyCommands(begin, end);
+        if (!buf_.str().empty()) {
+            std::cout <<"< "<< buf_.str() << std::endl;
+        } else {
+            std::cout << "< ok" << std::endl;
+        }
     } catch (interpreter_error &e) {
         std::cerr << e.what() << std::endl;
     }

@@ -1,10 +1,9 @@
-#pragma once
-
 #include "commands.h"
-#include <iostream>
 #include "interpreter_error.h"
+#include <iostream>
+#include <sstream>
 
-void Plus::apply(data &it) const {
+void Plus::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -19,7 +18,7 @@ void Plus::apply(data &it) const {
     it.push(sum);
 }
 
-void Minus::apply(data &it) const {
+void Minus::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -34,7 +33,7 @@ void Minus::apply(data &it) const {
     it.push(sub);
 }
 
-void Mul::apply(data &it) const {
+void Mul::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -49,7 +48,7 @@ void Mul::apply(data &it) const {
     it.push(mul);
 }
 
-void Dev::apply(data &it) const {
+void Dev::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -68,7 +67,7 @@ void Dev::apply(data &it) const {
     it.push(dev);
 }
 
-void Mod::apply(data &it) const {
+void Mod::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -83,7 +82,7 @@ void Mod::apply(data &it) const {
     it.push(mod);
 }
 
-void Equal::apply(data &it) const {
+void Equal::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -102,7 +101,7 @@ void Equal::apply(data &it) const {
     }
 }
 
-void Less::apply(data &it) const {
+void Less::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -121,7 +120,7 @@ void Less::apply(data &it) const {
     }
 }
 
-void Greater::apply(data &it) const {
+void Greater::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -140,30 +139,29 @@ void Greater::apply(data &it) const {
     }
 }
 
-void Dup::apply(data &it) const {
+void Dup::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
     it.push(it.top());
 }
 
-void Drop::apply(data &it) const {
+void Drop::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
     it.pop();
 }
 
-void Print::apply(data &it) const {
+void Print::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
-    std::cout << "< ";
-    std::cout << it.top() << std::endl;
+    buf << std::to_string(it.top()).c_str();
     it.pop();
 }
 
-void Swap::apply(data &it) const {
+void Swap::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -178,7 +176,7 @@ void Swap::apply(data &it) const {
     it.push(tmp2);
 }
 
-void Rot::apply(data &it) const {
+void Rot::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -199,7 +197,7 @@ void Rot::apply(data &it) const {
     it.push(tmp2);
 }
 
-void Over::apply(data &it) const {
+void Over::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
@@ -215,20 +213,18 @@ void Over::apply(data &it) const {
     it.push(tmp2);
 }
 
-void Emit::apply(data &it) const {
+void Emit::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
-    std::cout << "< ";
-    std::cout << (char) it.top() << std::endl;
+    buf << (char) it.top();
     it.pop();
 }
 
-void Cr::apply(data &) const {
-    std::cout << std::endl;
+void Cr::apply(data &, std::stringstream &buf) const {
+    buf << std::endl;
 }
 
-void PrintString::apply(data &) const {
-    std::cout << "< ";
-    std::cout << str_ << std::endl;
+void PrintString::apply(data &, std::stringstream &buf) const {
+    buf << str_;
 }

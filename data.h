@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stack>
 #include <iostream>
+#include <stack>
 
 class data {
 public:

@@ -1,8 +1,7 @@
-#include "interpreter.h"
 #include "commands.h"
-#include <algorithm>
+#include "interpreter.h"
 #include "interpreter_error.h"
-#include <sstream>
+#include <algorithm>
 
 namespace {
 

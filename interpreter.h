@@ -1,8 +1,12 @@
 #pragma once
 
 #include "commands.h"
+#include <iostream>
 #include <functional>
+#include <stack>
+#include "data.h"
 #include <unordered_map>
+#include <sstream>
 
 class Interpreter {
 public:
@@ -30,4 +34,6 @@ private:
     std::unordered_map<std::string, creator_t> creators_;
 
     data it_;
+
+    std::stringstream buf_;
 };
