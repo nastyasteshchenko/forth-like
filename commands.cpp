@@ -92,7 +92,7 @@ void Equal::apply(data &it, std::stringstream &) const {
     }
     const int eq = it.top();
     it.pop();
-    if (eq == it.top()) {
+    if (eq == it.top()){
         it.pop();
         it.push(1);
     } else {
@@ -111,7 +111,7 @@ void Less::apply(data &it, std::stringstream &) const {
     }
     const int eq = it.top();
     it.pop();
-    if (eq > it.top()) {
+    if (eq > it.top()){
         it.pop();
         it.push(1);
     } else {
@@ -130,7 +130,7 @@ void Greater::apply(data &it, std::stringstream &) const {
     }
     const int eq = it.top();
     it.pop();
-    if (eq < it.top()) {
+    if (eq < it.top()){
         it.pop();
         it.push(1);
     } else {

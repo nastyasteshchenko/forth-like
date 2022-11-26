@@ -15,11 +15,17 @@ public:
     typedef std::function<SmartPointer<Command>(std::string::const_iterator &,
                                                 const std::string::const_iterator &)> creator_t;
 
+    //creates a single instance of the class
+    //returns a single instance of the class
     static Interpreter &getInstance();
 
+    //registers commands
+    //returns true
     bool registerCreator(const creator_t &creator, const std::string &c);
 
+    //iterates over the string entered by the user, extracts commands and numbers from it and applies commands
     void getAndApplyCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end);
+
 
     void interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end);
 
