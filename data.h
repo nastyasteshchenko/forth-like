@@ -3,11 +3,19 @@
 #include <iostream>
 #include <stack>
 
+// CR: merge stack + out
+//struct context {
+//    data data_;
+//    std::stringstream out;
+//};
+
 class data {
 public:
 
     data() = default;
 
+    // CR: merge operations like pop and top
+    // CR: add exceptions
     void pop() {
         stack_.pop();
     }

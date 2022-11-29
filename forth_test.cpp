@@ -44,6 +44,24 @@ TEST(MulTest, Mul) {
 
 //Dev
 
+/**
+ * 1. / 0
+ * 2. empty stack
+ * 3. 1 element
+ * 4. round down
+ * 5. just division
+ */
+
+// CR:
+//TEST(DivTest, Regular) {
+//    std::string str = "100 154 /";
+//    Interpreter &i = Interpreter::getInstance();
+//    i.interpret(str.cbegin(), str.cend());
+//    str = ".";
+//    std::string res = i.interpret(str.cbegin(), str.cend());
+//    // EXPECT...
+//}
+
 TEST(DevTest, Dev1) {
     std::string str = "100 154 /";
     Interpreter &i = Interpreter::getInstance();

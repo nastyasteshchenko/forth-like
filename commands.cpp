@@ -48,6 +48,11 @@ void Mul::apply(data &it, std::stringstream &) const {
     it.push(mul);
 }
 
+// CR:
+// BinaryOp: Command
+// std::function
+
+// CR: Dev -> Div
 void Dev::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
@@ -148,7 +153,7 @@ void Dup::apply(data &it, std::stringstream &) const {
 
 void Drop::apply(data &it, std::stringstream &) const {
     if (it.size() == 0) {
-        throw interpreter_error("stack have no elements");
+        throw interpreter_error("stack has no elements");
     }
     it.pop();
 }
@@ -157,7 +162,7 @@ void Print::apply(data &it, std::stringstream &buf) const {
     if (it.size() == 0) {
         throw interpreter_error("stack have no elements");
     }
-    buf << std::to_string(it.top()).c_str();
+    buf << it.top();
     it.pop();
 }
 
@@ -183,9 +188,12 @@ void Rot::apply(data &it, std::stringstream &) const {
     if (it.size() == 1) {
         throw interpreter_error("stack have only one element");
     }
-    if (it.size() == 3) {
+    if (it.size() == 2) {
         throw interpreter_error("stack have only two elements");
     }
+//    if (it.size() < 3) {
+//        throw interpreter_error("stack has '" std::string(), "expected ...")
+//    }
     const int tmp1 = it.top();
     it.pop();
     const int tmp2 = it.top();

@@ -12,6 +12,7 @@
 class Interpreter {
 public:
 
+    // CR: unique_ptr
     typedef std::function<SmartPointer<Command>(std::string::const_iterator &,
                                                 const std::string::const_iterator &)> creator_t;
 
@@ -41,6 +42,7 @@ private:
 
     std::unordered_map<std::string, creator_t> creators_;
 
+    // CR: rename
     data it_;
 
     std::stringstream buf_;

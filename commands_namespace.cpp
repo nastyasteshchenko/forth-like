@@ -130,6 +130,16 @@ namespace {
                 Interpreter::getInstance().getAndApplyCommands(it, colon_it);
             }
         }
+        // CR:
+        // if if . else . then ; else . then ;
+        // if_creator
+        // get_cmds("else")
+        // if_creator
+        // get_cmds("else)
+
+
+        // If (std::vector<Command *> then_branch, std::vector<Command *> else_branch)
+        // apply(data) { if (data.top()) apply(then_branch) else apply(else_branch) }
         if (ss.str() == "else") {
             else_it--;
             it = else_it;
