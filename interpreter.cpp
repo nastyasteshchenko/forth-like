@@ -16,13 +16,13 @@ Interpreter::getCommands(const std::string::const_iterator &begin, const std::st
     std::vector<std::unique_ptr<Command>> cmds;
     for (auto it = begin; it < end; it++) {
         std::stringstream ss;
-        for (; *it != ' ' && *it != '\0'; it++) {
+        for (; !std::isspace(*it) && it != end; it++) {
             ss << *it;
         }
         if (!ss.str().empty()) {
             if (isSrtingStart(ss.str())) {
                     it++;
-                    for (; *it != ' ' && *it != '\0'; it++) {
+                    for (; !std::isspace(*it) && it != end; it++) {
                         ss << *it;
                 }
                 cmds.push_back(std::unique_ptr<Command>(new ParseString(ss.str())));
