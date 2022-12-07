@@ -1,26 +1,38 @@
 #pragma once
 
-#include <iostream>
+#include "interpreter_error.h"
+#include <sstream>
 #include <stack>
-
-// CR: merge stack + out
-//struct context {
-//    data data_;
-//    std::stringstream out;
-//};
 
 class data {
 public:
 
     data() = default;
 
-    // CR: merge operations like pop and top
-    // CR: add exceptions
+    void pushInsteadOfTop(const int val) {
+        stack_.pop();
+        stack_.push(val);
+    }
+
+    int getAndPopTopValue() {
+        int res = stack_.top();
+        stack_.pop();
+        return res;
+    }
+
+    void exceptionAboutSize(const unsigned long size, const std::string &cmd) const {
+        if (stack_.size() < size) {
+            std::stringstream ss;
+            ss << "stack has " << stack_.size() << " elements, expected " << size << " for '" << cmd << "'";
+            throw interpreter_error(ss.str());
+        }
+    }
+
     void pop() {
         stack_.pop();
     }
 
-    int top() {
+    int top() const {
         return stack_.top();
     }
 
@@ -28,11 +40,11 @@ public:
         stack_.push(val);
     }
 
-    size_t size() {
+    size_t size() const {
         return stack_.size();
     }
 
-    std::stack<int> operator*() {
+    std::stack<int> operator*() const {
         return stack_;
     }
 
@@ -43,5 +55,12 @@ private:
     data(data &other) = delete;
 
     data &operator=(data &other) = delete;
+
+};
+
+struct context {
+
+    data stack;
+    std::stringstream out;
 
 };

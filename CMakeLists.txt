@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.20)
 project(forth VERSION 0.1)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_compile_options(-fsanitize=address)
 add_link_options(-fsanitize=address)
 
-add_executable(forth main.cpp commands_namespace.cpp commands.cpp interpreter.cpp smart_pointer.h)
+add_executable(forth main.cpp commands_namespace.cpp commands.cpp interpreter.cpp bin_op.cpp)
 
-add_executable(forth_test commands_namespace.cpp forth_test.cpp commands.cpp interpreter.cpp)
+add_executable(forth_test commands_namespace.cpp forth_test.cpp commands.cpp interpreter.cpp bin_op.cpp)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -22,9 +22,6 @@ FetchContent_MakeAvailable(googletest)
 
 SET(WARN_FLAGS "-Wall -Wpedantic -Wextra")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARN_FLAGS} ${ASAN_OPTIONS}")
-
-set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
 enable_testing()
 

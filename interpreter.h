@@ -1,20 +1,19 @@
 #pragma once
 
 #include "commands.h"
-#include <iostream>
-#include <functional>
-#include <stack>
 #include "data.h"
+#include <expected>
+#include <functional>
+#include <vector>
+#include <memory>
+#include <stack>
 #include <unordered_map>
-#include <sstream>
-#include "smart_pointer.h"
 
 class Interpreter {
 public:
 
-    // CR: unique_ptr
-    typedef std::function<SmartPointer<Command>(std::string::const_iterator &,
-                                                const std::string::const_iterator &)> creator_t;
+    typedef std::function<std::unique_ptr<Command>(std::string::const_iterator &,
+                                                   const std::string::const_iterator &)> creator_t;
 
     //creates a single instance of the class
     //returns a single instance of the class
@@ -24,13 +23,19 @@ public:
     //returns true
     bool registerCreator(const creator_t &creator, const std::string &c);
 
-    //iterates over the string entered by the user, extracts commands and numbers from it and applies commands
-    void getAndApplyCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end);
+    //finds commands and digits in a user-supplied string
+    //returns vector of commands
+    std::vector<std::unique_ptr<Command>>
+    getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end);
 
+    //applies commands and catches exceptions
+    //returns the string containing the exception if catches an error
+    //returns the string containing result of applying commands otherwise
+    std::expected<std::string, std::string>
+    interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end);
 
-    void interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end);
-
-    std::stack<int> operator*();
+    //clears stack of digits
+    void clearStack();
 
 private:
 
@@ -42,8 +47,9 @@ private:
 
     std::unordered_map<std::string, creator_t> creators_;
 
-    // CR: rename
-    data it_;
+    context cntx_;
 
-    std::stringstream buf_;
+    bool isSrtingStart(const std::string &str);
+
+    bool isDigit(const std::string &str);
 };

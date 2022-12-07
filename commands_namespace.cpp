@@ -5,169 +5,130 @@
 
 namespace {
 
-    SmartPointer<Command> add_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Plus();
+    std::unique_ptr<Command> add_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("+"));
     }
 
     bool addOp = Interpreter::getInstance().registerCreator(add_creator, "+");
 
-    SmartPointer<Command> sub_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Minus();
+    std::unique_ptr<Command> sub_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("-"));
     }
 
     bool subOp = Interpreter::getInstance().registerCreator(sub_creator, "-");
 
-    SmartPointer<Command> mul_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Mul();
+    std::unique_ptr<Command> mul_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("*"));
     }
 
     bool mulOp = Interpreter::getInstance().registerCreator(mul_creator, "*");
 
-    SmartPointer<Command> dev_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Dev();
+    std::unique_ptr<Command> dev_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("/"));
     }
 
     bool devOp = Interpreter::getInstance().registerCreator(dev_creator, "/");
 
-    SmartPointer<Command> mod_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Mod();
+    std::unique_ptr<Command> mod_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("mod"));
     }
 
     bool modOp = Interpreter::getInstance().registerCreator(mod_creator, "mod");
 
-    SmartPointer<Command> eq_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Equal();
+    std::unique_ptr<Command> eq_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("="));
     }
 
     bool eqOp = Interpreter::getInstance().registerCreator(eq_creator, "=");
 
-    SmartPointer<Command> less_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Less();
+    std::unique_ptr<Command> less_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp("<"));
     }
 
     bool lessOp = Interpreter::getInstance().registerCreator(less_creator, "<");
 
-    SmartPointer<Command> greater_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Greater();
+    std::unique_ptr<Command> greater_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new BinaryOp(">"));
     }
 
     bool greaterOp = Interpreter::getInstance().registerCreator(greater_creator, ">");
 
-    SmartPointer<Command> dup_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Dup();
+    std::unique_ptr<Command> dup_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Dup());
     }
 
     bool dupOp = Interpreter::getInstance().registerCreator(dup_creator, "dup");
 
-    SmartPointer<Command> drop_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Drop();
+    std::unique_ptr<Command> drop_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Drop());
     }
 
     bool dropOp = Interpreter::getInstance().registerCreator(drop_creator, "drop");
 
-    SmartPointer<Command> print_creator(std::string::const_iterator &it, const std::string::const_iterator &end) {
-        if (*it == '\"') {
-            it++;
-            auto cl_quote_it = std::find_if(it, end, [](char c) { return c == '"'; });
-            if (cl_quote_it == end) {
-                throw interpreter_error("no closing quotation mark for print string");
-            }
-            std::stringstream ss;
-            for (; it != cl_quote_it; it++) {
-                ss << *it;
-            }
-            return new PrintString(ss.str());
-        }
-        return new Print();
+    std::unique_ptr<Command> print_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Print());
     }
 
     bool printOp = Interpreter::getInstance().registerCreator(print_creator, ".");
 
-    SmartPointer<Command> swap_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Swap();
+    std::unique_ptr<Command> swap_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Swap());
     }
 
     bool swapOp = Interpreter::getInstance().registerCreator(swap_creator, "swap");
 
-    SmartPointer<Command> rot_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Rot();
+    std::unique_ptr<Command> rot_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Rot());
     }
 
     bool rotOp = Interpreter::getInstance().registerCreator(rot_creator, "rot");
 
-    SmartPointer<Command> over_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Over();
+    std::unique_ptr<Command> over_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Over());
     }
 
     bool overOp = Interpreter::getInstance().registerCreator(over_creator, "over");
 
-    SmartPointer<Command> emit_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Emit();
+    std::unique_ptr<Command> emit_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Emit());
     }
 
     bool emitOp = Interpreter::getInstance().registerCreator(emit_creator, "emit");
 
-    SmartPointer<Command> cr_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Cr();
+    std::unique_ptr<Command> cr_creator(std::string::const_iterator &, const std::string::const_iterator &) {
+        return std::unique_ptr<Command>(new Cr());
     }
 
     bool crOp = Interpreter::getInstance().registerCreator(cr_creator, "cr");
 
-    SmartPointer<Command> if_creator(std::string::const_iterator &it, const std::string::const_iterator &end) {
-        const auto colon_it = std::find_if(it, end, [](char c) { return c == ';'; });
-        if (colon_it == end) {
-            throw interpreter_error("no colon for 'if'");
+    std::unique_ptr<Command> if_creator(std::string::const_iterator &it, const std::string::const_iterator &end) {
+        std::vector<std::unique_ptr<Command>> main_branch;
+        std::vector<std::unique_ptr<Command>> else_branch;
+        const std::string thenStr = "then ;";
+        auto posThen = std::find_end(it, end, thenStr.begin(), thenStr.end());
+        if (posThen == end) {
+            throw interpreter_error("no 'then ;' for 'if'");
         }
-        auto else_it = std::find_if(it, end, [](char c) { return c == 'e'; });
-        std::stringstream ss;
-        auto iter = else_it;
-        ss << *iter << *(++iter) << *(++iter) << *(++iter);
-        it++;
-        if (Interpreter::getInstance().operator*().top() != 0) {
-            if (ss.str() == "else") {
-                Interpreter::getInstance().getAndApplyCommands(it, else_it);
-            } else {
-                Interpreter::getInstance().getAndApplyCommands(it, colon_it);
-            }
-        }
-        // CR:
-        // if if . else . then ; else . then ;
-        // if_creator
-        // get_cmds("else")
-        // if_creator
-        // get_cmds("else)
+        const std::string elseStr = "else";
+        auto posElse = std::find_end(it, end, elseStr.begin(), elseStr.end());
+        const std::string ifStr = "if";
+        auto posIf = std::find_end(it, end, ifStr.begin(), ifStr.end());
+        if (posElse != end && (posIf > posElse || posIf == end  || (posThen>posElse && posIf!=end ))){
+                main_branch = Interpreter::getInstance().getCommands(it, --posElse);
+                for (int i = 0; i < 5; i++) {
+                    ++posElse;
+                }
 
-
-        // If (std::vector<Command *> then_branch, std::vector<Command *> else_branch)
-        // apply(data) { if (data.top()) apply(then_branch) else apply(else_branch) }
-        if (ss.str() == "else") {
-            else_it--;
-            it = else_it;
+            else_branch = Interpreter::getInstance().getCommands(posElse, --posThen);
         } else {
-            it = colon_it;
+            main_branch = Interpreter::getInstance().getCommands(it, --posThen);
         }
-        return new If();
+        for (; *posThen != ';';) {
+            ++posThen;
+        }
+        it = ++posThen;
+        return std::unique_ptr<Command>(new If(main_branch, else_branch));
     }
 
     bool ifOp = Interpreter::getInstance().registerCreator(if_creator, "if");
-
-    SmartPointer<Command> then_creator(std::string::const_iterator &, const std::string::const_iterator &) {
-        return new Then();
-    }
-
-    bool thenOp = Interpreter::getInstance().registerCreator(then_creator, "then;");
-
-    SmartPointer<Command> else_creator(std::string::const_iterator &it, const std::string::const_iterator &end) {
-        const auto colon_it = std::find_if(it, end, [](char c) { return c == ';'; });
-        if (colon_it == end) {
-            throw interpreter_error("no colon for 'if'");
-        }
-        it++;
-        if (Interpreter::getInstance().operator*().top() == 0)
-            Interpreter::getInstance().getAndApplyCommands(it, colon_it);
-        it = colon_it;
-        return new Else();
-    }
-
-    bool elseOp = Interpreter::getInstance().registerCreator(else_creator, "else");
 }

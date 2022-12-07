@@ -1,5 +1,5 @@
+#include "commands.h"
 #include "interpreter.h"
-#include "interpreter_error.h"
 
 Interpreter &Interpreter::getInstance() {
     static Interpreter i;
@@ -11,83 +11,65 @@ bool Interpreter::registerCreator(const creator_t &creator, const std::string &c
     return true;
 }
 
-//std::vector<Command *> Interpreter::getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
-//    std::vector<Command *> cmds;
-//    for () {
-//        if (is_digit()) {
-//            int n = parse_digit();
-//            cmds.push_back(Push(n));
-//            continue;
-//        }
-//
-//        auto creator_it = creators_.find(ss.str());
-//        if (creator_it == creators_.end()) {
-//            std::stringstream strError;
-//            strError << "no such command : '" << ss.str() << "'";
-//            throw interpreter_error(strError.str());
-//        }
-//        creator_t creator = (*creator_it).second;
-//        cmds.push_back(creator(it, end));
-//    }
-//}
-
-void
-Interpreter::getAndApplyCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
+std::vector<std::unique_ptr<Command>>
+Interpreter::getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
+    std::vector<std::unique_ptr<Command>> cmds;
     for (auto it = begin; it < end; it++) {
-        // ."
-        if (is_string_start()) {
-            // std::find_if(.", end(), "\"");
-            std::string str = parse_string();
-            std::cout << str << std::endl;
-            continue;
-        }
-        // 1, 2, ... (https://en.cppreference.com/w/cpp/string/byte/isdigit)
-        if (is_digit()) {
-            int n = parse_digit();
-            it_.push(n);
-            continue;
-        }
-
-
         std::stringstream ss;
         for (; *it != ' ' && *it != '\0'; it++) {
-            if (*it == '\"') break;
             ss << *it;
         }
-        char *e;
-        int val = std::strtol(ss.str().data(), &e, 10);
-        if (val != 0 || ss.str() == "0") {
-            it_.push(val);
-            continue;
+        if (!ss.str().empty()) {
+            if (isSrtingStart(ss.str())) {
+                    it++;
+                    for (; *it != ' ' && *it != '\0'; it++) {
+                        ss << *it;
+                }
+                cmds.push_back(std::unique_ptr<Command>(new ParseString(ss.str())));
+                continue;
+            }
+            if (isDigit(ss.str())) {
+                char *e;
+                cmds.push_back(std::unique_ptr<Command>(new ParseDigit(std::strtol(ss.str().data(), &e, 10))));
+                continue;
+            }
+            auto creator_it = creators_.find(ss.str());
+            if (creator_it == creators_.end()) {
+                std::stringstream strError;
+                strError << "no such command : '" << ss.str() << "'";
+                throw interpreter_error(strError.str());
+            }
+            creator_t creator = (*creator_it).second;
+            cmds.push_back(creator(it, end));
         }
-        auto creator_it = creators_.find(ss.str());
-        if (creator_it == creators_.end()) {
-            std::stringstream strError;
-            strError << "no such command : '" << ss.str() << "'";
-            throw interpreter_error(strError.str());
-        }
-        creator_t creator = (*creator_it).second;
-        SmartPointer<Command> cmd = creator(it, end);
-        (*cmd).apply(it_, buf_);
     }
+    return cmds;
 }
 
-// https://en.cppreference.com/w/cpp/utility/expected
-void Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
+std::expected<std::string, std::string>
+Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     try {
-        buf_.str("");
-        getAndApplyCommands(begin, end);
-        if (!buf_.str().empty()) {
-            std::cout << "< " << buf_.str() << std::endl;
-        } else {
-            std::cout << "< ok" << std::endl;
+        cntx_.out.str("");
+        const std::vector<std::unique_ptr<Command>> cmds = getCommands(begin, end);
+        for (auto &cmd: cmds) {
+            cmd->apply(cntx_);
         }
     } catch (interpreter_error &e) {
-        std::cerr << e.what() << std::endl;
+        return std::unexpected<std::string>(e.what());
+    }
+    return cntx_.out.str().data();
+}
+
+bool Interpreter::isSrtingStart(const std::string &str) {
+    return str.find(".\"") != std::string::npos;
+}
+
+bool Interpreter::isDigit(const std::string &str) {
+    return str.find_first_not_of("0123456789") == std::string::npos;
+}
+
+void Interpreter::clearStack() {
+    while (cntx_.stack.size() != 0) {
+        cntx_.stack.pop();
     }
 }
-
-std::stack<int> Interpreter::operator*() {
-    return *it_;
-}
-
