@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "interpreter.h"
 #include "commands.h"
-#include "bin_op.h"
 
 //interpret
 
@@ -28,13 +27,13 @@ TEST(PlusTest, Sum) {
 TEST(PlusTest, EmptyStack) {
     std::string str = "+";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '+'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(PlusTest, ExpectedSize) {
     std::string str = "1 +";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '+'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 
@@ -55,13 +54,13 @@ TEST(MinusTest, positiveResult) {
 TEST(MinusTest, EmptyStack) {
     std::string str = "-";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '-'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(MinusTest, ExpectedSize) {
     std::string str = "1 -";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '-'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 
@@ -76,13 +75,13 @@ TEST(MulTest, Mul) {
 TEST(MulTest, EmptyStack) {
     std::string str = "*";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '*'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(MulTest, ExpectedSize) {
     std::string str = "1 *";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '*'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 
@@ -103,13 +102,13 @@ TEST(DivTest, Div2) {
 TEST(DivTest, EmptyStack) {
     std::string str = "/";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '/'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(DivTest, ExpectedSize) {
     std::string str = "1 /";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '/'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 TEST(DivTest, DivByZero) {
@@ -142,13 +141,13 @@ TEST(ModTest, Mod3) {
 TEST(ModTest, EmptyStack) {
     std::string str = "mod";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'mod'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(ModTest, ExpectedSize) {
     std::string str = "1 mod";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'mod'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 
@@ -169,13 +168,13 @@ TEST(EqualTest, NotEqual) {
 TEST(EqualTest, EmptyStack) {
     std::string str = "=";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '='");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(EqualTest, ExpectedSize) {
     std::string str = "1 =";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '='");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 
@@ -202,13 +201,13 @@ TEST(LessTest, NotLess2) {
 TEST(LessTest, EmptyStack) {
     std::string str = "<";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '<'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(LessTest, ExpectedSize) {
     std::string str = "1 <";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '<'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 
@@ -235,13 +234,13 @@ TEST(GreaterTest, NotGreater2) {
 TEST(GreaterTest, EmptyStack) {
     std::string str = ">";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for '>'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(GreaterTest, ExpectedSize) {
     std::string str = "1 >";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for '>'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
     i.clearStack();
 }
 

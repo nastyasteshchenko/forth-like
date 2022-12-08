@@ -14,10 +14,10 @@ public:
         stack_.push(val);
     }
 
-    int getAndPopTopValue() {
-        int res = stack_.top();
+    int pop() {
+        int top = stack_.top();
         stack_.pop();
-        return res;
+        return top;
     }
 
     void exceptionAboutSize(const unsigned long size, const std::string &cmd) const {
@@ -28,14 +28,6 @@ public:
         }
     }
 
-    int pop() {
-        if (stack_.size() == 0) {
-            // TODO: exception
-        }
-        int top = stack_.top();
-        stack_.pop();
-        return top;
-    }
 
     int top() const {
         return stack_.top();

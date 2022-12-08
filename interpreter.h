@@ -49,7 +49,7 @@ private:
 
     context cntx_;
 
-    bool isStringStart(const std::string &str);
+    bool isSrtingStart(const std::string &str);
 
     bool isDigit(const std::string &str);
 };

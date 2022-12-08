@@ -1,6 +1,5 @@
 #pragma once
 
-#include "bin_op.h"
 #include "data.h"
 #include <functional>
 #include <memory>
@@ -40,26 +39,67 @@ private:
 class BinaryOp : public Command {
 public:
 
-    BinaryOp(std::string binOp) : binOp_(std::move(binOp)) {}
-
     //performs a certain binary operation
     //puts the result on the top of the stack
     void apply(context &) const override;
 
-//    virtual int apply2(int a, int b) const = 0;
+    virtual int appplyBinOp(int a, int b) const = 0;
 
-private:
-    std::string binOp_;
-    std::unordered_map<std::string, std::function<void(context &)>> binOperations_={
-            {"+", &plus},
-            {"-", &minus},
-            {"*", &mul},
-            {"/", &division},
-            {"mod", &mod},
-            {"=", &equal},
-            {"<", &less},
-            {">", &greater},
-    };
+};
+
+class Plus : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Minus : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Mul : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Mod : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Div : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Less : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Equal : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
+
+};
+
+class Greater : public BinaryOp {
+public:
+
+    int appplyBinOp(int a, int b) const override;
 
 };
 
@@ -123,9 +163,11 @@ public:
 class If : public Command {
 public:
 
-    If(std::vector<std::unique_ptr<Command>> &then_branch, std::vector<std::unique_ptr<Command>> &else_branch) : main_branch_(std::move(then_branch)),
-                                                                                                                 else_branch_(
-                                                                                           std::move(else_branch)) {}
+    If(std::vector<std::unique_ptr<Command>> &then_branch, std::vector<std::unique_ptr<Command>> &else_branch)
+            : main_branch_(std::move(then_branch)),
+              else_branch_(
+                      std::move(else_branch)) {}
+
     //if there isn't 0 on the top of the stack, the main branch is executed, otherwise else branch
     void apply(context &) const override;
 
