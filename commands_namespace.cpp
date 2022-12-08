@@ -102,7 +102,7 @@ namespace {
     bool crOp = Interpreter::getInstance().registerCreator(cr_creator, "cr");
 
     std::unique_ptr<Command> if_creator(std::string::const_iterator &it, const std::string::const_iterator &end) {
-        std::vector<std::unique_ptr<Command>> main_branch;
+        std::vector<std::unique_ptr<Command>> then_branch;
         std::vector<std::unique_ptr<Command>> else_branch;
         const std::string thenStr = "then ;";
         auto posThen = std::find_end(it, end, thenStr.begin(), thenStr.end());
@@ -114,20 +114,20 @@ namespace {
         const std::string ifStr = "if";
         auto posIf = std::find_end(it, end, ifStr.begin(), ifStr.end());
         if (posElse != end && (posIf > posElse || posIf == end  || (posThen>posElse && posIf!=end ))){
-                main_branch = Interpreter::getInstance().getCommands(it, --posElse);
+            then_branch = Interpreter::getInstance().getCommands(it, --posElse);
                 for (int i = 0; i < 5; i++) {
                     ++posElse;
                 }
 
             else_branch = Interpreter::getInstance().getCommands(posElse, --posThen);
         } else {
-            main_branch = Interpreter::getInstance().getCommands(it, --posThen);
+            then_branch = Interpreter::getInstance().getCommands(it, --posThen);
         }
         for (; *posThen != ';';) {
             ++posThen;
         }
         it = ++posThen;
-        return std::unique_ptr<Command>(new If(main_branch, else_branch));
+        return std::unique_ptr<Command>(new If(then_branch, else_branch));
     }
 
     bool ifOp = Interpreter::getInstance().registerCreator(if_creator, "if");

@@ -1,6 +1,5 @@
 #include "commands.h"
 #include "interpreter_error.h"
-#include <iostream>
 #include <sstream>
 #include <functional>
 

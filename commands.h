@@ -46,6 +46,8 @@ public:
     //puts the result on the top of the stack
     void apply(context &) const override;
 
+//    virtual int apply2(int a, int b) const = 0;
+
 private:
     std::string binOp_;
     std::unordered_map<std::string, std::function<void(context &)>> binOperations_={

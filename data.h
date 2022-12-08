@@ -28,8 +28,13 @@ public:
         }
     }
 
-    void pop() {
+    int pop() {
+        if (stack_.size() == 0) {
+            // TODO: exception
+        }
+        int top = stack_.top();
         stack_.pop();
+        return top;
     }
 
     int top() const {

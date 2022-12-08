@@ -12,24 +12,53 @@ bool Interpreter::registerCreator(const creator_t &creator, const std::string &c
 }
 
 std::vector<std::unique_ptr<Command>>
-Interpreter::getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
+Interpreter::getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end,
+                         const std::function<bool(std::string::const_iterator)>& stopCondition) {
     std::vector<std::unique_ptr<Command>> cmds;
+    auto it = begin;
+    do {
+        it = skipSpaces();
+        if (stopCondition(it)) {
+            return cmds;
+        }
+        auto word_end = std::find_if(begin, end, ::isspace);
+        std::string word = std::string(begin, word_end);
+        it = word_end;
+        if (isDigit(word)) {
+            // CR: ParseDigit -> Push
+            cmds.push_back(std::unique_ptr<Command>(new ParseDigit(std::strtol(ss.str().data(), &e, 10))));
+        } else if (isStringStart(word)) {
+            std::string content = getStringContent();
+            // CR: make_unique
+            cmds.push_back(std::unique_ptr<Command>(new PrintString(content)));
+        } else {
+            auto creator_it = getCommand(word);
+            cmds.push_back(creator(it, end));
+        }
+    } while (it != end);
+
+
     for (auto it = begin; it < end; it++) {
+        auto word_end = std::find_if(begin, end, ::isspace);
+        std::string word = std::string(begin, word_end);
         std::stringstream ss;
         for (; !std::isspace(*it) && it != end; it++) {
             ss << *it;
         }
         if (!ss.str().empty()) {
-            if (isSrtingStart(ss.str())) {
-                    it++;
-                    for (; !std::isspace(*it) && it != end; it++) {
-                        ss << *it;
+            if (isStringStart(ss.str())) {
+                // CR: ."
+                it++;
+                // CR: ." foo foo"
+                for (; !std::isspace(*it) && it != end; it++) {
+                    ss << *it;
                 }
                 cmds.push_back(std::unique_ptr<Command>(new ParseString(ss.str())));
                 continue;
             }
             if (isDigit(ss.str())) {
                 char *e;
+                // CR: std::stoi
                 cmds.push_back(std::unique_ptr<Command>(new ParseDigit(std::strtol(ss.str().data(), &e, 10))));
                 continue;
             }
@@ -49,6 +78,8 @@ Interpreter::getCommands(const std::string::const_iterator &begin, const std::st
 std::expected<std::string, std::string>
 Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     try {
+//        std::stringstream ss;
+//        context cntxt = { stack_, ss };
         cntx_.out.str("");
         const std::vector<std::unique_ptr<Command>> cmds = getCommands(begin, end);
         for (auto &cmd: cmds) {
@@ -60,7 +91,7 @@ Interpreter::interpret(const std::string::const_iterator &begin, const std::stri
     return cntx_.out.str().data();
 }
 
-bool Interpreter::isSrtingStart(const std::string &str) {
+bool Interpreter::isStringStart(const std::string &str) {
     return str.find(".\"") != std::string::npos;
 }
 
