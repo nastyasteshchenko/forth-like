@@ -9,11 +9,6 @@ public:
 
     data() = default;
 
-    void pushInsteadOfTop(const int val) {
-        stack_.pop();
-        stack_.push(val);
-    }
-
     int pop() {
         int top = stack_.top();
         stack_.pop();
@@ -45,11 +40,11 @@ public:
         return stack_;
     }
 
+    data(data &other) = default;
+
 private:
 
     std::stack<int> stack_;
-
-    data(data &other) = delete;
 
     data &operator=(data &other) = delete;
 
@@ -57,7 +52,7 @@ private:
 
 struct context {
 
-    data stack;
+    data &stack;
     std::stringstream out;
 
 };

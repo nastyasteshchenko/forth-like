@@ -3,20 +3,14 @@
 #include <iostream>
 #include <sstream>
 #include <functional>
+#include "interpreter.h"
 
-void ParseDigit::apply(context &cntx) const {
+void PushDigit::apply(context &cntx) const {
     cntx.stack.push(val_);
 }
 
 void ParseString::apply(context &cntx) const {
-    auto it = std::find_if(str_.begin(), str_.end(), [](char c) { return c == '\"'; });
-    const auto end = std::find_if(++it, str_.end(), [](char c) { return c == '\"'; });
-    if (end == str_.end()) {
-        throw interpreter_error("no closing quotation mark for printing string");
-    }
-    for (auto iter = it; *iter != '\"'; iter++) {
-        cntx.out << *iter;
-    }
+    cntx.out << content_;
 }
 
 void BinaryOp::apply(context &cntx) const {
@@ -82,7 +76,8 @@ void Swap::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(2, "swap");
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.top();
-    cntx.stack.pushInsteadOfTop(tmp1);
+    cntx.stack.pop();
+    cntx.stack.push(tmp1);
     cntx.stack.push(tmp2);
 }
 
@@ -91,7 +86,8 @@ void Rot::apply(context &cntx) const {
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.pop();
     const int tmp3 = cntx.stack.top();
-    cntx.stack.pushInsteadOfTop(tmp1);
+    cntx.stack.pop();
+    cntx.stack.push(tmp1);
     cntx.stack.push(tmp3);
     cntx.stack.push(tmp2);
 }
@@ -100,7 +96,8 @@ void Over::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(2, "over");
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.top();
-    cntx.stack.pushInsteadOfTop(tmp2);
+    cntx.stack.pop();
+    cntx.stack.push(tmp2);
     cntx.stack.push(tmp1);
     cntx.stack.push(tmp2);
 }
@@ -118,12 +115,34 @@ void Cr::apply(context &cntx) const {
 void If::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(1, "if");
     if (cntx.stack.top()) {
-        for (auto &cmd: main_branch_) {
+        for (auto &cmd: thenBranch_) {
             cmd->apply(cntx);
         }
     } else {
-        for (auto &cmd: else_branch_) {
+        for (auto &cmd: elseBranch_) {
             cmd->apply(cntx);
         }
+    }
+}
+
+void Loop::apply(context &cntx) const {
+    int start = cntx.stack.pop();
+    int end = cntx.stack.pop();
+
+    for (int i = start; i<end; i++){
+        std::string tmp = loopBody_;
+        size_t pos;
+
+        while ((pos = tmp.find('i')) != std::string::npos) {
+            tmp.replace(pos, 1, std::to_string(i));
+        }
+
+        std::string::const_iterator it = tmp.begin();
+        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, tmp.cend());
+
+        for (auto &cmd: loopBody) {
+            cmd->apply(cntx);
+        }
+
     }
 }

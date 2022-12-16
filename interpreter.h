@@ -21,35 +21,52 @@ public:
 
     //registers commands
     //returns true
-    bool registerCreator(const creator_t &creator, const std::string &c);
+    bool registerCreator(const creator_t &, const std::string &);
 
     //finds commands and digits in a user-supplied string
     //returns vector of commands
     std::vector<std::unique_ptr<Command>>
-    getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end);
+    getCommands(std::string::const_iterator &, const std::string::const_iterator &);
 
     //applies commands and catches exceptions
     //returns the string containing the exception if catches an error
     //returns the string containing result of applying commands otherwise
     std::expected<std::string, std::string>
-    interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end);
+    interpret(const std::string::const_iterator &, const std::string::const_iterator &);
 
     //clears stack of digits
     void clearStack();
 
 private:
 
+    friend Command;
+
     Interpreter() = default;
 
-    Interpreter(Interpreter &other) = delete;
+    Interpreter(Interpreter &) = delete;
 
-    Interpreter &operator=(const Interpreter &other) = delete;
+    Interpreter &operator=(const Interpreter &) = delete;
 
     std::unordered_map<std::string, creator_t> creators_;
 
-    context cntx_;
+    data stack_;
 
-    bool isSrtingStart(const std::string &str);
+    struct countsForIf {
+        size_t countIf;
+        size_t countThen;
+    };
 
-    bool isDigit(const std::string &str);
+    countsForIf countsForIf_;
+
+    std::string::const_iterator skipSpaces(std::string::const_iterator &, const std::string::const_iterator &);
+
+    std::string getStringContent(std::string::const_iterator &, const std::string::const_iterator &);
+
+    bool isKeyWord(std::string &);
+
+    bool stopCondition(std::string::const_iterator &, const std::string::const_iterator &);
+
+    bool isSrtingStart(const std::string &);
+
+    bool isDigit(const std::string &);
 };

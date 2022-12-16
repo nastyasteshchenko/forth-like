@@ -1,5 +1,7 @@
 #include "commands.h"
 #include "interpreter.h"
+#include <iostream>
+
 
 Interpreter &Interpreter::getInstance() {
     static Interpreter i;
@@ -12,52 +14,112 @@ bool Interpreter::registerCreator(const creator_t &creator, const std::string &c
 }
 
 std::vector<std::unique_ptr<Command>>
-Interpreter::getCommands(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
+Interpreter::getCommands(std::string::const_iterator &it, const std::string::const_iterator &end) {
     std::vector<std::unique_ptr<Command>> cmds;
-    for (auto it = begin; it < end; it++) {
-        std::stringstream ss;
-        for (; !std::isspace(*it) && it != end; it++) {
-            ss << *it;
+    do {
+        it = skipSpaces(it, end);
+        if (it == end)
+            return cmds;
+
+        if (stopCondition(it, end)) {
+            return cmds;
         }
-        if (!ss.str().empty()) {
-            if (isSrtingStart(ss.str())) {
-                    it++;
-                    for (; !std::isspace(*it) && it != end; it++) {
-                        ss << *it;
-                }
-                cmds.push_back(std::unique_ptr<Command>(new ParseString(ss.str())));
-                continue;
-            }
-            if (isDigit(ss.str())) {
-                char *e;
-                cmds.push_back(std::unique_ptr<Command>(new ParseDigit(std::strtol(ss.str().data(), &e, 10))));
-                continue;
-            }
-            auto creator_it = creators_.find(ss.str());
-            if (creator_it == creators_.end()) {
-                std::stringstream strError;
-                strError << "no such command : '" << ss.str() << "'";
-                throw interpreter_error(strError.str());
-            }
+
+        auto word_end = std::find_if(it, end, [](char c) { return std::isspace(c); });
+        std::string word = std::string(it, word_end);
+
+        if (isSrtingStart(word)) {
+            it = ++word_end;
+            std::string content = getStringContent(it, end);
+            cmds.push_back(std::unique_ptr<Command>(new ParseString(content)));
+            continue;
+        }
+
+        if (isDigit(word)) {
+            cmds.push_back(std::unique_ptr<Command>(new PushDigit(std::stoi(word, nullptr, 10))));
+            it = word_end;
+            continue;
+        }
+
+        auto creator_it = creators_.find(word);
+        if (creator_it == creators_.end() && !isKeyWord(word)) {
+            std::stringstream strError;
+            strError << "no such command : '" << word << "'";
+            throw interpreter_error(strError.str());
+        }
+
+        it = word_end;
+
+        if (!isKeyWord(word)) {
             creator_t creator = (*creator_it).second;
             cmds.push_back(creator(it, end));
         }
-    }
+
+    } while (it != end);
+
     return cmds;
 }
 
 std::expected<std::string, std::string>
 Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
+    std::stringstream out;
+    context cntx = {stack_, std::move(out)};
+
     try {
-        cntx_.out.str("");
-        const std::vector<std::unique_ptr<Command>> cmds = getCommands(begin, end);
+        auto it = begin;
+        countsForIf_ = {0, 0};
+
+        const std::vector<std::unique_ptr<Command>> cmds = getCommands(it, end);
         for (auto &cmd: cmds) {
-            cmd->apply(cntx_);
+            cmd->apply(cntx);
         }
+
     } catch (interpreter_error &e) {
         return std::unexpected<std::string>(e.what());
     }
-    return cntx_.out.str().data();
+
+    return cntx.out.str().data();
+}
+
+std::string::const_iterator
+Interpreter::skipSpaces(std::string::const_iterator &it, const std::string::const_iterator &end) {
+    return std::find_if(it, end, [](char c) { return !std::isspace(c); });
+}
+
+std::string Interpreter::getStringContent(std::string::const_iterator &it, const std::string::const_iterator &end) {
+    auto quotePos = find_if(it, end, [](char c) { return c == '\"'; });
+    if (quotePos == end) {
+        throw interpreter_error("no closing quotation mark for printing string");
+    }
+
+    std::string content = std::string(it, quotePos);
+    it = ++quotePos;
+    return content;
+}
+
+bool Interpreter::stopCondition(std::string::const_iterator &it, const std::string::const_iterator &end) {
+    auto word_end = std::find_if(it, end, [](char c) { return std::isspace(c); });
+    std::string word = std::string(it, word_end);
+
+    if (word == "else") {
+        it = ++word_end;
+        return true;
+    }
+
+    if (word == "then") {
+        if (*(++word_end) == ';') {
+            it = word_end;
+        } else {
+            throw interpreter_error("no ';' for 'if'");
+        }
+        return true;
+    }
+
+    return false;
+}
+
+bool Interpreter::isKeyWord(std::string &str) {
+    return str == "i";
 }
 
 bool Interpreter::isSrtingStart(const std::string &str) {
@@ -69,7 +131,7 @@ bool Interpreter::isDigit(const std::string &str) {
 }
 
 void Interpreter::clearStack() {
-    while (cntx_.stack.size() != 0) {
-        cntx_.stack.pop();
+    while (stack_.size() != 0) {
+        stack_.pop();
     }
 }

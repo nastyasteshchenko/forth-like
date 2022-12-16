@@ -15,19 +15,19 @@ public:
 class ParseString : public Command {
 public:
 
-    ParseString(std::string str) : str_(std::move(str)) {};
+    ParseString(std::string str) : content_(std::move(str)) {};
 
     //prints the string between the quotes
     void apply(context &) const override;
 
 private:
-    std::string str_;
+    std::string content_;
 };
 
-class ParseDigit : public Command {
+class PushDigit : public Command {
 public:
 
-    ParseDigit(int val) : val_(val) {};
+    PushDigit(int val) : val_(val) {};
 
     //puts a digit on the top of the stack
     void apply(context &) const override;
@@ -163,15 +163,27 @@ public:
 class If : public Command {
 public:
 
-    If(std::vector<std::unique_ptr<Command>> &then_branch, std::vector<std::unique_ptr<Command>> &else_branch)
-            : main_branch_(std::move(then_branch)),
-              else_branch_(
-                      std::move(else_branch)) {}
+    If(std::vector<std::unique_ptr<Command>> &thenBranch, std::vector<std::unique_ptr<Command>> &elseBranch)
+            : thenBranch_(std::move(thenBranch)),
+              elseBranch_(
+                      std::move(elseBranch)) {}
 
     //if there isn't 0 on the top of the stack, the main branch is executed, otherwise else branch
     void apply(context &) const override;
 
 private:
-    std::vector<std::unique_ptr<Command>> main_branch_;
-    std::vector<std::unique_ptr<Command>> else_branch_;
+    std::vector<std::unique_ptr<Command>> thenBranch_;
+    std::vector<std::unique_ptr<Command>> elseBranch_;
+};
+
+class Loop : public Command {
+public:
+
+    Loop(std::string &loopBody) : loopBody_(std::move(loopBody)) {}
+
+    void apply(context &) const override;
+
+private:
+    std::string loopBody_;
+
 };
