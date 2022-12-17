@@ -136,6 +136,7 @@ void If::apply(context &cntx) const {
 }
 
 void Loop::apply(context &cntx) const {
+    cntx.stack.exceptionAboutSize(2, "loop");
 
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();

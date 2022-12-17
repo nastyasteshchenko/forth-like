@@ -521,6 +521,13 @@ TEST(IfTest, NoColon) {
     i.clearStack();
 }
 
+TEST(IfTest, ExpectedSize) {
+    std::string str = "if 78 . then ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for 'if'");
+    i.clearStack();
+}
+
 //Loop
 
 TEST(LoopTest, PrintingNumbers) {
@@ -548,5 +555,19 @@ TEST(LoopTest, NoLoop) {
     std::string str = "10 0 do i 1 = if i . then ;";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no 'loop ;' for 'loop'");
+    i.clearStack();
+}
+
+TEST(LoopTest, ExpectedSize1) {
+    std::string str = "do i 78 . loop ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'loop'");
+    i.clearStack();
+}
+
+TEST(LoopTest, ExpectedSize2) {
+    std::string str = "1 do i 78 . loop ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'loop'");
     i.clearStack();
 }
