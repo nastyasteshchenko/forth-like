@@ -1,6 +1,5 @@
 #include "commands.h"
 #include "interpreter_error.h"
-#include <iostream>
 #include <sstream>
 #include <functional>
 #include "interpreter.h"
@@ -15,6 +14,7 @@ void ParseString::apply(context &cntx) const {
 
 void BinaryOp::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(2, "binary operation");
+
     int a = cntx.stack.pop();
     int b = cntx.stack.pop();
     int res = this->appplyBinOp(a, b);
@@ -58,22 +58,26 @@ int Greater::appplyBinOp(const int a, const int b) const {
 
 void Dup::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(1, "dup");
+
     cntx.stack.push(cntx.stack.top());
 }
 
 void Drop::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(1, "drop");
+
     cntx.stack.pop();
 }
 
 void Print::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(1, ".");
+
     cntx.out << std::to_string(cntx.stack.top()).c_str();
     cntx.stack.pop();
 }
 
 void Swap::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(2, "swap");
+
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.top();
     cntx.stack.pop();
@@ -83,9 +87,11 @@ void Swap::apply(context &cntx) const {
 
 void Rot::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(3, "rot");
+
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.pop();
     const int tmp3 = cntx.stack.top();
+
     cntx.stack.pop();
     cntx.stack.push(tmp1);
     cntx.stack.push(tmp3);
@@ -94,8 +100,10 @@ void Rot::apply(context &cntx) const {
 
 void Over::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(2, "over");
+
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.top();
+
     cntx.stack.pop();
     cntx.stack.push(tmp2);
     cntx.stack.push(tmp1);
@@ -104,6 +112,7 @@ void Over::apply(context &cntx) const {
 
 void Emit::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(1, "emit");
+
     cntx.out << (char) cntx.stack.top();
     cntx.stack.pop();
 }
@@ -114,6 +123,7 @@ void Cr::apply(context &cntx) const {
 
 void If::apply(context &cntx) const {
     cntx.stack.exceptionAboutSize(1, "if");
+
     if (cntx.stack.top()) {
         for (auto &cmd: thenBranch_) {
             cmd->apply(cntx);
@@ -126,15 +136,16 @@ void If::apply(context &cntx) const {
 }
 
 void Loop::apply(context &cntx) const {
+
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();
 
-    for (int i = start; i<end; i++){
+    for (int i = start; i < end; i++) {
         std::string tmp = loopBody_;
-        size_t pos;
 
-        while ((pos = tmp.find('i')) != std::string::npos) {
-            tmp.replace(pos, 1, std::to_string(i));
+        size_t pos;
+        while ((pos = tmp.find("i ")) != std::string::npos) {
+                tmp.replace(pos, 1, std::to_string(i));
         }
 
         std::string::const_iterator it = tmp.begin();

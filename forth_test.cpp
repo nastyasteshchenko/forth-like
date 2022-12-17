@@ -435,6 +435,13 @@ TEST(PrintStringTest, PrintingString2) {
     i.clearStack();
 }
 
+TEST(PrintStringTest, PrintingString3) {
+    std::string str = ".\" abc def\"";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "abc def");
+    i.clearStack();
+}
+
 TEST(PrintStringTest, NoClosingQuote) {
     std::string str = ".\" abcdef";
     Interpreter &i = Interpreter::getInstance();
@@ -511,5 +518,35 @@ TEST(IfTest, NoColon) {
     std::string str = "1 if 0 if 43 . else 832 then . 67 . else 78 . 1 if 45 . then ; then ;";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no ';' for 'if'");
+    i.clearStack();
+}
+
+//Loop
+
+TEST(LoopTest, PrintingNumbers) {
+    std::string str = "10 0 do i . loop ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0123456789");
+    i.clearStack();
+}
+
+TEST(LoopTest, LoopInIf) {
+    std::string str = "1 if 10 0 do i . loop ; then ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0123456789");
+    i.clearStack();
+}
+
+TEST(LoopTest, LoopOutIf) {
+    std::string str = "10 0 do i 1 = if i . then ; loop ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+    i.clearStack();
+}
+
+TEST(LoopTest, NoLoop) {
+    std::string str = "10 0 do i 1 = if i . then ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no 'loop ;' for 'loop'");
     i.clearStack();
 }

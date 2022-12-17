@@ -51,13 +51,6 @@ private:
 
     data stack_;
 
-    struct countsForIf {
-        size_t countIf;
-        size_t countThen;
-    };
-
-    countsForIf countsForIf_;
-
     std::string::const_iterator skipSpaces(std::string::const_iterator &, const std::string::const_iterator &);
 
     std::string getStringContent(std::string::const_iterator &, const std::string::const_iterator &);

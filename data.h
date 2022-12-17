@@ -10,6 +10,10 @@ public:
     data() = default;
 
     int pop() {
+        if (stack_.empty()) {
+            throw interpreter_error("stack has 0 elements, expected 1");
+        }
+
         int top = stack_.top();
         stack_.pop();
         return top;

@@ -50,6 +50,7 @@ public:
 class Plus : public BinaryOp {
 public:
 
+    //returns the sum of two numbers
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -57,6 +58,7 @@ public:
 class Minus : public BinaryOp {
 public:
 
+    //returns the difference between the second and the first number
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -64,6 +66,7 @@ public:
 class Mul : public BinaryOp {
 public:
 
+    //returns result of multiplying numbers
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -71,6 +74,7 @@ public:
 class Mod : public BinaryOp {
 public:
 
+    //returns the remainder of dividing the first number by the second one
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -78,6 +82,7 @@ public:
 class Div : public BinaryOp {
 public:
 
+    //returns division of the first number by the second one
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -85,6 +90,8 @@ public:
 class Less : public BinaryOp {
 public:
 
+    //returns 1 if the first number is less than the second one
+    //returns 0 otherwise
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -92,6 +99,8 @@ public:
 class Equal : public BinaryOp {
 public:
 
+    //returns 1 if numbers are equal
+    //returns 0 otherwise
     int appplyBinOp(int a, int b) const override;
 
 };
@@ -99,6 +108,8 @@ public:
 class Greater : public BinaryOp {
 public:
 
+    //returns 1 if the first number is greater than the second one
+    //returns 0 otherwise
     int appplyBinOp(int a, int b) const override;
 
 };

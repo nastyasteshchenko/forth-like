@@ -31,12 +31,12 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
         if (isSrtingStart(word)) {
             it = ++word_end;
             std::string content = getStringContent(it, end);
-            cmds.push_back(std::unique_ptr<Command>(new ParseString(content)));
+            cmds.push_back(std::make_unique<ParseString>(ParseString(content)));
             continue;
         }
 
         if (isDigit(word)) {
-            cmds.push_back(std::unique_ptr<Command>(new PushDigit(std::stoi(word, nullptr, 10))));
+            cmds.push_back(std::make_unique<PushDigit>(PushDigit(std::stoi(word, nullptr, 10))));
             it = word_end;
             continue;
         }
@@ -67,7 +67,6 @@ Interpreter::interpret(const std::string::const_iterator &begin, const std::stri
 
     try {
         auto it = begin;
-        countsForIf_ = {0, 0};
 
         const std::vector<std::unique_ptr<Command>> cmds = getCommands(it, end);
         for (auto &cmd: cmds) {
