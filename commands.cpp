@@ -17,42 +17,42 @@ void BinaryOp::apply(context &cntx) const {
 
     int a = cntx.stack.pop();
     int b = cntx.stack.pop();
-    int res = this->appplyBinOp(a, b);
+    int res = this->applyBinOp(a, b);
     cntx.stack.push(res);
 }
 
-int Plus::appplyBinOp(const int a, const int b) const {
+int Plus::applyBinOp(const int a, const int b) const {
     return a + b;
 }
 
-int Minus::appplyBinOp(const int a, const int b) const {
+int Minus::applyBinOp(const int a, const int b) const {
     return b - a;
 }
 
-int Mul::appplyBinOp(const int a, const int b) const {
+int Mul::applyBinOp(const int a, const int b) const {
     return a * b;
 }
 
-int Mod::appplyBinOp(const int a, const int b) const {
+int Mod::applyBinOp(const int a, const int b) const {
     return b % a;
 }
 
-int Div::appplyBinOp(const int a, const int b) const {
+int Div::applyBinOp(const int a, const int b) const {
     if (a == 0) {
         throw interpreter_error("division by zero");
     }
     return b / a;
 }
 
-int Less::appplyBinOp(const int a, const int b) const {
+int Less::applyBinOp(const int a, const int b) const {
     return a > b;
 }
 
-int Equal::appplyBinOp(const int a, const int b) const {
+int Equal::applyBinOp(const int a, const int b) const {
     return a == b;
 }
 
-int Greater::appplyBinOp(const int a, const int b) const {
+int Greater::applyBinOp(const int a, const int b) const {
     return a < b;
 }
 

@@ -43,7 +43,7 @@ public:
     //puts the result on the top of the stack
     void apply(context &) const override;
 
-    virtual int appplyBinOp(int a, int b) const = 0;
+    virtual int applyBinOp(int a, int b) const = 0;
 
 };
 
@@ -51,7 +51,7 @@ class Plus : public BinaryOp {
 public:
 
     //returns the sum of two numbers
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -59,7 +59,7 @@ class Minus : public BinaryOp {
 public:
 
     //returns the difference between the second and the first number
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -67,7 +67,7 @@ class Mul : public BinaryOp {
 public:
 
     //returns result of multiplying numbers
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -75,7 +75,7 @@ class Mod : public BinaryOp {
 public:
 
     //returns the remainder of dividing the first number by the second one
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -83,7 +83,7 @@ class Div : public BinaryOp {
 public:
 
     //returns division of the first number by the second one
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -92,7 +92,7 @@ public:
 
     //returns 1 if the first number is less than the second one
     //returns 0 otherwise
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -101,7 +101,7 @@ public:
 
     //returns 1 if numbers are equal
     //returns 0 otherwise
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
@@ -110,7 +110,7 @@ public:
 
     //returns 1 if the first number is greater than the second one
     //returns 0 otherwise
-    int appplyBinOp(int a, int b) const override;
+    int applyBinOp(int a, int b) const override;
 
 };
 
