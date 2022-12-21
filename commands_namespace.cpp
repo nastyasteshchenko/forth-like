@@ -100,11 +100,17 @@ namespace {
 
     bool crOp = Interpreter::getInstance().registerCreator(crCreator, "cr");
 
+    bool is_if_end(const std::string & word) {
+        return word == "else" || word == "then";
+    }
+
     std::unique_ptr<Command> ifCreator(std::string::const_iterator &it, const std::string::const_iterator &end) {
         std::vector<std::unique_ptr<Command>> thenBranch;
         std::vector<std::unique_ptr<Command>> elseBranch;
 
-        thenBranch = Interpreter::getInstance().getCommands(it, end);
+        // if .... then ;
+        // if .... else ... then ;
+        thenBranch = Interpreter::getInstance().getCommands(it, end, is_if_end);
 
         if (*it != ';') {
             elseBranch = Interpreter::getInstance().getCommands(it, end);
@@ -112,12 +118,18 @@ namespace {
 
         it++;
 
-        return std::make_unique<If>(If(thenBranch, elseBranch));
+        return std::make_unique<If>(thenBranch, elseBranch);
     }
 
     bool ifOp = Interpreter::getInstance().registerCreator(ifCreator, "if");
 
     std::unique_ptr<Command> loopCreator(std::string::const_iterator &it, const std::string::const_iterator &end) {
+
+        Interpreter::getInstance().registerCreator(i_creator, "i");
+        Interpreter::getInstance().getCommands(...);
+        Interpreter::getInstance().deRegisterCreator(i_creator, "i");
+        // I() .
+
         std::string loopStr = "loop ;";
         auto posLoop = std::find_end(it, end, loopStr.begin(), loopStr.end());
         if (posLoop == end) {

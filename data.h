@@ -10,6 +10,7 @@ public:
     data() = default;
 
     int pop() {
+        // CR: assert instead
         if (stack_.empty()) {
             throw interpreter_error("stack has 0 elements, expected 1");
         }
@@ -19,6 +20,7 @@ public:
         return top;
     }
 
+    // CR: exceptionAboutSize -> expectSize
     void exceptionAboutSize(const unsigned long size, const std::string &cmd) const {
         if (stack_.size() < size) {
             std::stringstream ss;
@@ -40,6 +42,7 @@ public:
         return stack_.size();
     }
 
+    // CR: remove
     std::stack<int> operator*() const {
         return stack_;
     }
@@ -54,9 +57,15 @@ private:
 
 };
 
+struct range {
+    int start;
+    int end;
+};
+
 struct context {
 
     data &stack;
     std::stringstream out;
+    std::optional<range> loop_range;
 
 };

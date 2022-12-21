@@ -59,7 +59,7 @@ private:
 
     bool stopCondition(std::string::const_iterator &, const std::string::const_iterator &);
 
-    bool isSrtingStart(const std::string &);
+    bool isStringStart(const std::string &str);
 
     bool isDigit(const std::string &);
 };

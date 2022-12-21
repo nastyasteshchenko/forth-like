@@ -141,20 +141,29 @@ void Loop::apply(context &cntx) const {
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();
 
+    cntx.loop_range = range(start, end);
+
     for (int i = start; i < end; i++) {
-        std::string tmp = loopBody_;
 
-        size_t pos;
-        while ((pos = tmp.find("i ")) != std::string::npos) {
-                tmp.replace(pos, 1, std::to_string(i));
-        }
-
-        std::string::const_iterator it = tmp.begin();
-        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, tmp.cend());
-
-        for (auto &cmd: loopBody) {
+        for (std::unique_ptr<Command> cmd: loopBody_) {
             cmd->apply(cntx);
         }
 
+//        std::string tmp = loopBody_;
+//
+//        size_t pos;
+//        while ((pos = tmp.find("i ")) != std::string::npos) {
+//                tmp.replace(pos, 1, std::to_string(i));
+//        }
+//
+//        std::string::const_iterator it = tmp.begin();
+//        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, tmp.cend());
+//
+//        for (auto &cmd: loopBody) {
+//            cmd->apply(cntx);
+//        }
+
     }
+
+    // remove loop_range
 }

@@ -14,21 +14,26 @@ bool Interpreter::registerCreator(const creator_t &creator, const std::string &c
 }
 
 std::vector<std::unique_ptr<Command>>
-Interpreter::getCommands(std::string::const_iterator &it, const std::string::const_iterator &end) {
+Interpreter::getCommands(std::string::const_iterator &it, const std::string::const_iterator &end, std::function<bool(const std::string &)> stopCondition) {
     std::vector<std::unique_ptr<Command>> cmds;
     do {
         it = skipSpaces(it, end);
         if (it == end)
             return cmds;
 
-        if (stopCondition(it, end)) {
-            return cmds;
-        }
+//        if (stopCondition(it, end)) {
+//            return cmds;
+//        }
 
         auto word_end = std::find_if(it, end, [](char c) { return std::isspace(c); });
         std::string word = std::string(it, word_end);
 
-        if (isSrtingStart(word)) {
+        if (stopCondition(word)) {
+            return cmds;
+        }
+
+        if (isStringStart(word)) {
+            // CR: ."
             it = ++word_end;
             std::string content = getStringContent(it, end);
             cmds.push_back(std::make_unique<ParseString>(ParseString(content)));
@@ -36,7 +41,7 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
         }
 
         if (isDigit(word)) {
-            cmds.push_back(std::make_unique<PushDigit>(PushDigit(std::stoi(word, nullptr, 10))));
+            cmds.push_back(std::make_unique<PushDigit>(PushDigit(std::stoi(word))));
             it = word_end;
             continue;
         }
@@ -77,7 +82,7 @@ Interpreter::interpret(const std::string::const_iterator &begin, const std::stri
         return std::unexpected<std::string>(e.what());
     }
 
-    return cntx.out.str().data();
+    return cntx.out.str();
 }
 
 std::string::const_iterator
@@ -121,11 +126,13 @@ bool Interpreter::isKeyWord(std::string &str) {
     return str == "i";
 }
 
-bool Interpreter::isSrtingStart(const std::string &str) {
+bool Interpreter::isStringStart(const std::string &str) {
+    // CR: f."
     return str.find(".\"") != std::string::npos;
 }
 
 bool Interpreter::isDigit(const std::string &str) {
+    // CR: -22
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 

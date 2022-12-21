@@ -190,11 +190,11 @@ private:
 class Loop : public Command {
 public:
 
-    Loop(std::string &loopBody) : loopBody_(std::move(loopBody)) {}
+//    Loop(std::string &loopBody) : loopBody_(std::move(loopBody)) {}
 
     void apply(context &) const override;
 
 private:
-    std::string loopBody_;
+    std::vector<std::unique_ptr<Command>> loopBody_;
 
 };
