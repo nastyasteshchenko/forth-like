@@ -12,6 +12,12 @@ public:
     virtual ~Command() = default;
 };
 
+class I : public Command {
+public:
+
+    void apply(context &) const override;
+};
+
 class ParseString : public Command {
 public:
 
@@ -190,7 +196,7 @@ private:
 class Loop : public Command {
 public:
 
-//    Loop(std::string &loopBody) : loopBody_(std::move(loopBody)) {}
+    Loop(std::vector<std::unique_ptr<Command>> &loopBody) : loopBody_(std::move(loopBody)) {}
 
     void apply(context &) const override;
 

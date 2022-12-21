@@ -8,12 +8,16 @@ void PushDigit::apply(context &cntx) const {
     cntx.stack.push(val_);
 }
 
+void I::apply(context &cntx) const {
+    cntx.stack.push(cntx.loopRange->start);
+}
+
 void ParseString::apply(context &cntx) const {
     cntx.out << content_;
 }
 
 void BinaryOp::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(2, "binary operation");
+    cntx.stack.expectSize(2, "binary operation");
 
     int a = cntx.stack.pop();
     int b = cntx.stack.pop();
@@ -57,26 +61,26 @@ int Greater::applyBinOp(const int a, const int b) const {
 }
 
 void Dup::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(1, "dup");
+    cntx.stack.expectSize(1, "dup");
 
     cntx.stack.push(cntx.stack.top());
 }
 
 void Drop::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(1, "drop");
+    cntx.stack.expectSize(1, "drop");
 
     cntx.stack.pop();
 }
 
 void Print::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(1, ".");
+    cntx.stack.expectSize(1, ".");
 
     cntx.out << std::to_string(cntx.stack.top()).c_str();
     cntx.stack.pop();
 }
 
 void Swap::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(2, "swap");
+    cntx.stack.expectSize(2, "swap");
 
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.top();
@@ -86,7 +90,7 @@ void Swap::apply(context &cntx) const {
 }
 
 void Rot::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(3, "rot");
+    cntx.stack.expectSize(3, "rot");
 
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.pop();
@@ -99,7 +103,7 @@ void Rot::apply(context &cntx) const {
 }
 
 void Over::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(2, "over");
+    cntx.stack.expectSize(2, "over");
 
     const int tmp1 = cntx.stack.pop();
     const int tmp2 = cntx.stack.top();
@@ -111,7 +115,7 @@ void Over::apply(context &cntx) const {
 }
 
 void Emit::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(1, "emit");
+    cntx.stack.expectSize(1, "emit");
 
     cntx.out << (char) cntx.stack.top();
     cntx.stack.pop();
@@ -122,7 +126,7 @@ void Cr::apply(context &cntx) const {
 }
 
 void If::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(1, "if");
+    cntx.stack.expectSize(1, "if");
 
     if (cntx.stack.top()) {
         for (auto &cmd: thenBranch_) {
@@ -136,34 +140,18 @@ void If::apply(context &cntx) const {
 }
 
 void Loop::apply(context &cntx) const {
-    cntx.stack.exceptionAboutSize(2, "loop");
+    cntx.stack.expectSize(2, "loop");
 
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();
 
-    cntx.loop_range = range(start, end);
+    cntx.loopRange = {start, end};
 
     for (int i = start; i < end; i++) {
-
-        for (std::unique_ptr<Command> cmd: loopBody_) {
+        for (auto &cmd: loopBody_) {
             cmd->apply(cntx);
         }
-
-//        std::string tmp = loopBody_;
-//
-//        size_t pos;
-//        while ((pos = tmp.find("i ")) != std::string::npos) {
-//                tmp.replace(pos, 1, std::to_string(i));
-//        }
-//
-//        std::string::const_iterator it = tmp.begin();
-//        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, tmp.cend());
-//
-//        for (auto &cmd: loopBody) {
-//            cmd->apply(cntx);
-//        }
-
+        cntx.loopRange->start=i+1;
     }
-
-    // remove loop_range
+    cntx.loopRange.reset();
 }

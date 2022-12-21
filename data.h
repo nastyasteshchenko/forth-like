@@ -3,6 +3,7 @@
 #include "interpreter_error.h"
 #include <sstream>
 #include <stack>
+#include <optional>
 
 class data {
 public:
@@ -20,8 +21,7 @@ public:
         return top;
     }
 
-    // CR: exceptionAboutSize -> expectSize
-    void exceptionAboutSize(const unsigned long size, const std::string &cmd) const {
+    void expectSize(const unsigned long size, const std::string &cmd) const {
         if (stack_.size() < size) {
             std::stringstream ss;
             ss << "stack has " << stack_.size() << " elements, expected " << size << " for '" << cmd << "'";
@@ -66,6 +66,6 @@ struct context {
 
     data &stack;
     std::stringstream out;
-    std::optional<range> loop_range;
+    std::optional<range> loopRange;
 
 };

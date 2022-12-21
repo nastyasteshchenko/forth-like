@@ -23,10 +23,12 @@ public:
     //returns true
     bool registerCreator(const creator_t &, const std::string &);
 
+    bool deRegisterCreator(const std::string &);
+
     //finds commands and digits in a user-supplied string
     //returns vector of commands
     std::vector<std::unique_ptr<Command>>
-    getCommands(std::string::const_iterator &, const std::string::const_iterator &);
+    getCommands(std::string::const_iterator &, const std::string::const_iterator &, std::function<bool(const std::string &)>);
 
     //applies commands and catches exceptions
     //returns the string containing the exception if catches an error
@@ -57,9 +59,7 @@ private:
 
     bool isKeyWord(std::string &);
 
-    bool stopCondition(std::string::const_iterator &, const std::string::const_iterator &);
+    bool isStringStart(const std::string &);
 
-    bool isStringStart(const std::string &str);
-
-    bool isDigit(const std::string &);
+    bool isDigit( std::string);
 };

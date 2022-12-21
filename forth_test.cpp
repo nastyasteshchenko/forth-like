@@ -23,6 +23,12 @@ TEST(PlusTest, Sum) {
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "254");
 }
 
+TEST(PlusTest, SumNegatives) {
+    std::string str = "-100 154 + .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "54");
+}
+
 TEST(PlusTest, EmptyStack) {
     std::string str = "+";
     Interpreter &i = Interpreter::getInstance();
@@ -46,10 +52,16 @@ TEST(MinusTest, NegativeResult) {
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-54");
 }
 
-TEST(MinusTest, positiveResult) {
+TEST(MinusTest, PositiveResult) {
     std::string str = "200 154 - .";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "46");
+}
+
+TEST(MinusTest, SubNegatives) {
+    std::string str = "-200 154 - .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-354");
 }
 
 TEST(MinusTest, EmptyStack) {
@@ -73,6 +85,12 @@ TEST(MulTest, Mul) {
     std::string str = "100 154 * .";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "15400");
+}
+
+TEST(MulTest, MulNegatives) {
+    std::string str = "100 -154 * .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-15400");
 }
 
 TEST(MulTest, EmptyStack) {
@@ -102,6 +120,12 @@ TEST(DivTest, Div2) {
     std::string str = "1000 154 / .";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "6");
+}
+
+TEST(DivTest, DivNegatives) {
+    std::string str = "-1000 154 / .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-6");
 }
 
 TEST(DivTest, EmptyStack) {
@@ -168,6 +192,18 @@ TEST(EqualTest, Equal) {
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
+TEST(EqualTest, EqualNegatives) {
+    std::string str = "-160 -160 = .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+}
+
+TEST(EqualTest, NoEqualNegatives) {
+    std::string str = "-160 160 = .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+}
+
 TEST(EqualTest, NotEqual) {
     std::string str = "154 1 mod .";
     Interpreter &i = Interpreter::getInstance();
@@ -193,6 +229,12 @@ TEST(EqualTest, ExpectedSize) {
 
 TEST(LessTest, Less) {
     std::string str = "159 160 < .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+}
+
+TEST(LessTest, LessNegatives) {
+    std::string str = "-159 160 < .";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
 }
@@ -230,6 +272,12 @@ TEST(GreaterTest, Greater) {
     std::string str = "178 160 > .";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+}
+
+TEST(GreaterTest, GreaterNegatives) {
+    std::string str = "-178 160 > .";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(GreaterTest, NotGreater1) {
@@ -446,6 +494,13 @@ TEST(PrintStringTest, NoClosingQuote) {
     std::string str = ".\" abcdef";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no closing quotation mark for printing string");
+    i.clearStack();
+}
+
+TEST(PrintStringTest, NoSpace) {
+    std::string str = ".\"";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no space after '.\"'");
     i.clearStack();
 }
 

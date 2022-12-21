@@ -13,17 +13,23 @@ bool Interpreter::registerCreator(const creator_t &creator, const std::string &c
     return true;
 }
 
+bool Interpreter::deRegisterCreator(const std::string &c) {
+    creators_.erase(c);
+    return true;
+}
+
+bool isEnd(const std::string &) {
+    return false;
+}
+
 std::vector<std::unique_ptr<Command>>
-Interpreter::getCommands(std::string::const_iterator &it, const std::string::const_iterator &end, std::function<bool(const std::string &)> stopCondition) {
+Interpreter::getCommands(std::string::const_iterator &it, const std::string::const_iterator &end,
+                         std::function<bool(const std::string &)> stopCondition) {
     std::vector<std::unique_ptr<Command>> cmds;
     do {
         it = skipSpaces(it, end);
         if (it == end)
             return cmds;
-
-//        if (stopCondition(it, end)) {
-//            return cmds;
-//        }
 
         auto word_end = std::find_if(it, end, [](char c) { return std::isspace(c); });
         std::string word = std::string(it, word_end);
@@ -33,32 +39,32 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
         }
 
         if (isStringStart(word)) {
-            // CR: ."
-            it = ++word_end;
+            if (std::isspace(*word_end)) {
+                it = ++word_end;
+            } else {
+                throw interpreter_error("no space after '.\"'");
+            }
             std::string content = getStringContent(it, end);
-            cmds.push_back(std::make_unique<ParseString>(ParseString(content)));
+            cmds.push_back(std::make_unique<ParseString>(content));
             continue;
         }
 
         if (isDigit(word)) {
-            cmds.push_back(std::make_unique<PushDigit>(PushDigit(std::stoi(word))));
+            cmds.push_back(std::make_unique<PushDigit>(std::stoi(word)));
             it = word_end;
             continue;
         }
 
         auto creator_it = creators_.find(word);
-        if (creator_it == creators_.end() && !isKeyWord(word)) {
+        if (creator_it == creators_.end()) {
             std::stringstream strError;
             strError << "no such command : '" << word << "'";
             throw interpreter_error(strError.str());
         }
 
         it = word_end;
-
-        if (!isKeyWord(word)) {
-            creator_t creator = (*creator_it).second;
-            cmds.push_back(creator(it, end));
-        }
+        creator_t creator = (*creator_it).second;
+        cmds.push_back(creator(it, end));
 
     } while (it != end);
 
@@ -73,7 +79,7 @@ Interpreter::interpret(const std::string::const_iterator &begin, const std::stri
     try {
         auto it = begin;
 
-        const std::vector<std::unique_ptr<Command>> cmds = getCommands(it, end);
+        const std::vector<std::unique_ptr<Command>> cmds = getCommands(it, end, isEnd);
         for (auto &cmd: cmds) {
             cmd->apply(cntx);
         }
@@ -101,38 +107,20 @@ std::string Interpreter::getStringContent(std::string::const_iterator &it, const
     return content;
 }
 
-bool Interpreter::stopCondition(std::string::const_iterator &it, const std::string::const_iterator &end) {
-    auto word_end = std::find_if(it, end, [](char c) { return std::isspace(c); });
-    std::string word = std::string(it, word_end);
-
-    if (word == "else") {
-        it = ++word_end;
-        return true;
-    }
-
-    if (word == "then") {
-        if (*(++word_end) == ';') {
-            it = word_end;
-        } else {
-            throw interpreter_error("no ';' for 'if'");
-        }
-        return true;
-    }
-
-    return false;
-}
-
-bool Interpreter::isKeyWord(std::string &str) {
-    return str == "i";
-}
-
 bool Interpreter::isStringStart(const std::string &str) {
-    // CR: f."
+    if (str.size() > 2) {
+        return false;
+    }
     return str.find(".\"") != std::string::npos;
 }
 
-bool Interpreter::isDigit(const std::string &str) {
-    // CR: -22
+bool Interpreter::isDigit(std::string str) {
+    if (*str.begin() == '-') {
+        str = std::string(str.begin() + 1, str.end());
+        if (str.empty()) {
+            return false;
+        }
+    }
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
