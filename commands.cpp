@@ -1,15 +1,13 @@
 #include "commands.h"
 #include "interpreter_error.h"
 #include <sstream>
-#include <functional>
-#include "interpreter.h"
 
 void PushDigit::apply(context &cntx) const {
     cntx.stack.push(val_);
 }
 
 void I::apply(context &cntx) const {
-    cntx.stack.push(cntx.loopRange->start);
+    cntx.stack.push(cntx.start);
 }
 
 void ParseString::apply(context &cntx) const {
@@ -145,13 +143,14 @@ void Loop::apply(context &cntx) const {
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();
 
-    cntx.loopRange = {start, end};
+    cntx.start = start;
 
     for (int i = start; i < end; i++) {
         for (auto &cmd: loopBody_) {
             cmd->apply(cntx);
         }
-        cntx.loopRange->start=i+1;
+        cntx.start= i + 1;
     }
-    cntx.loopRange.reset();
+
+    cntx.start=0;
 }

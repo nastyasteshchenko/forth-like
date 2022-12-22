@@ -18,10 +18,6 @@ bool Interpreter::deRegisterCreator(const std::string &c) {
     return true;
 }
 
-bool isEnd(const std::string &) {
-    return false;
-}
-
 std::vector<std::unique_ptr<Command>>
 Interpreter::getCommands(std::string::const_iterator &it, const std::string::const_iterator &end,
                          std::function<bool(const std::string &)> stopCondition) {
@@ -71,10 +67,14 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
     return cmds;
 }
 
+bool isEnd(const std::string &) {
+    return false;
+}
+
 std::expected<std::string, std::string>
 Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     std::stringstream out;
-    context cntx = {stack_, std::move(out)};
+    context cntx = {stack_, std::move(out), 0};
 
     try {
         auto it = begin;

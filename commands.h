@@ -15,6 +15,7 @@ public:
 class I : public Command {
 public:
 
+    //puts the value of key word on the top of the stack
     void apply(context &) const override;
 };
 

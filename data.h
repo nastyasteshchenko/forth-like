@@ -3,7 +3,7 @@
 #include "interpreter_error.h"
 #include <sstream>
 #include <stack>
-#include <optional>
+#include <cassert>
 
 class data {
 public:
@@ -11,10 +11,7 @@ public:
     data() = default;
 
     int pop() {
-        // CR: assert instead
-        if (stack_.empty()) {
-            throw interpreter_error("stack has 0 elements, expected 1");
-        }
+        assert(!stack_.empty());
 
         int top = stack_.top();
         stack_.pop();
@@ -29,7 +26,6 @@ public:
         }
     }
 
-
     int top() const {
         return stack_.top();
     }
@@ -42,11 +38,6 @@ public:
         return stack_.size();
     }
 
-    // CR: remove
-    std::stack<int> operator*() const {
-        return stack_;
-    }
-
     data(data &other) = default;
 
 private:
@@ -57,15 +48,10 @@ private:
 
 };
 
-struct range {
-    int start;
-    int end;
-};
-
 struct context {
 
     data &stack;
     std::stringstream out;
-    std::optional<range> loopRange;
+    int start;
 
 };

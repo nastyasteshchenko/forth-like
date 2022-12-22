@@ -115,8 +115,12 @@ namespace {
             elseBranch = Interpreter::getInstance().getCommands(it, end, isIfEnd);
         }
 
-        if (*(it + 5) != ';') {
+        if (it + 4 == end) {
             throw interpreter_error("no ';' for 'if'");
+        } else {
+            if (*(it + 5) != ';') {
+                throw interpreter_error("no ';' for 'if'");
+            }
         }
 
         it = it + 6;
@@ -140,7 +144,15 @@ namespace {
 
         std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, end, isLoopEnd);
 
-       // Interpreter::getInstance().deRegisterCreator("i");
+        Interpreter::getInstance().deRegisterCreator("i");
+
+        if (it + 4 == end) {
+            throw interpreter_error("no ';' for 'loop'");
+        } else {
+            if (*(it + 5) != ';') {
+                throw interpreter_error("no ';' for 'loop'");
+            }
+        }
 
         it = it + 6;
 

@@ -23,6 +23,8 @@ public:
     //returns true
     bool registerCreator(const creator_t &, const std::string &);
 
+    //delete command creator
+    //returns true
     bool deRegisterCreator(const std::string &);
 
     //finds commands and digits in a user-supplied string
@@ -56,8 +58,6 @@ private:
     std::string::const_iterator skipSpaces(std::string::const_iterator &, const std::string::const_iterator &);
 
     std::string getStringContent(std::string::const_iterator &, const std::string::const_iterator &);
-
-    bool isKeyWord(std::string &);
 
     bool isStringStart(const std::string &);
 

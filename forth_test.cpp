@@ -504,6 +504,13 @@ TEST(PrintStringTest, NoSpace) {
     i.clearStack();
 }
 
+TEST(PrintStringTest, NoSuchCommand) {
+    std::string str = "f.\"";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no such command : 'f.\"'");
+    i.clearStack();
+}
+
 //If
 
 TEST(IfTest, OnlyThenBranch1) {
@@ -606,10 +613,10 @@ TEST(LoopTest, LoopOutIf) {
     i.clearStack();
 }
 
-TEST(LoopTest, NoLoop) {
-    std::string str = "10 0 do i 1 = if i . then ;";
+TEST(LoopTest, NoColon) {
+    std::string str = "10 0 do i 1 = if i . then ; loop";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no 'loop ;' for 'loop'");
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no ';' for 'loop'");
     i.clearStack();
 }
 
@@ -624,5 +631,12 @@ TEST(LoopTest, ExpectedSize2) {
     std::string str = "1 do i 78 . loop ;";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'loop'");
+    i.clearStack();
+}
+
+TEST(LoopTest, NestedLoop) {
+    std::string str = "10 0 do i . 12 11 do i . loop ; loop ;";
+    Interpreter &i = Interpreter::getInstance();
+    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "011111211311411511611711811911");
     i.clearStack();
 }
