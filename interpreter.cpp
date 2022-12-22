@@ -38,8 +38,7 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
             if (word_end != end && std::isspace(*word_end)) {
                 it = ++word_end;
             } else {
-                // CR: closing quote message
-                throw interpreter_error("no space after '.\"'");
+                throw interpreter_error("no closing quotation mark for printing string");
             }
             std::string content = getStringContent(it, end);
             cmds.push_back(std::make_unique<ParseString>(content));
@@ -68,16 +67,14 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
     return cmds;
 }
 
-bool isEnd(const std::string &) {
-    return false;
-}
-
 std::expected<std::string, std::string>
 Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
     context cntx = {stack_};
 
     try {
         auto it = begin;
+
+        auto isEnd = [](const std::string &) { return false; };
 
         const std::vector<std::unique_ptr<Command>> cmds = getCommands(it, end, isEnd);
         for (auto &cmd: cmds) {
@@ -122,11 +119,4 @@ bool Interpreter::isDigit(std::string str) {
         }
     }
     return str.find_first_not_of("0123456789") == std::string::npos;
-}
-
-// CR: remove
-void Interpreter::clearStack() {
-    while (stack_.size() != 0) {
-        stack_.pop();
-    }
 }

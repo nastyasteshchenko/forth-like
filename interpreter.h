@@ -1,7 +1,7 @@
 #pragma once
 
 #include "commands.h"
-#include "data.h"
+#include "data_stack.h"
 #include <expected>
 #include <functional>
 #include <vector>
@@ -32,13 +32,10 @@ public:
     getCommands(std::string::const_iterator &, const std::string::const_iterator &, std::function<bool(const std::string &)>);
 
     //applies commands and catches exceptions
-    //returns the string containing the exception if catches an error
+    //returns the string containing the exception if an error was catches
     //returns the string containing result of applying commands otherwise
     std::expected<std::string, std::string>
     interpret(const std::string::const_iterator &, const std::string::const_iterator &);
-
-    //clears stack of digits
-    void clearStack();
 
 private:
 
@@ -52,7 +49,7 @@ private:
 
     std::unordered_map<std::string, creator_t> creators_;
 
-    data stack_;
+    dataStack stack_;
 
     std::string::const_iterator skipSpaces(std::string::const_iterator &, const std::string::const_iterator &);
 

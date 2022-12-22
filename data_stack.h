@@ -5,11 +5,10 @@
 #include <stack>
 #include <cassert>
 
-// CR: data -> data_stack
-class data {
+class dataStack {
 public:
 
-    data() = default;
+    dataStack() = default;
 
     int pop() {
         assert(!stack_.empty());
@@ -39,23 +38,22 @@ public:
         return stack_.size();
     }
 
-    data(data &other) = default;
+    dataStack(dataStack &other) = default;
 
 private:
 
     std::stack<int> stack_;
 
-    data &operator=(data &other) = delete;
+    dataStack &operator=(dataStack &other) = delete;
 
 };
 
 struct context {
 
-    context(data & stack): stack(stack) {}
+    context(dataStack & stack): stack(stack) {}
 
-    data &stack;
+    dataStack &stack;
     std::stringstream out;
-    // CR: start -> iteration
-    int start = 0;
+    int iteration = 0;
 
 };

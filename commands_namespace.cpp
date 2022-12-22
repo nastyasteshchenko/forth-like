@@ -100,31 +100,43 @@ namespace {
 
     bool crOp = Interpreter::getInstance().registerCreator(crCreator, "cr");
 
-    bool isIfEnd(const std::string &word) {
-        return word == "else" || word == "then";
-    }
-
     std::unique_ptr<Command> ifCreator(std::string::const_iterator &it, const std::string::const_iterator &end) {
         std::vector<std::unique_ptr<Command>> thenBranch;
         std::vector<std::unique_ptr<Command>> elseBranch;
 
+        auto isIfEnd = [](const std::string &word) { return word == "then" || word == "else"; };
+
         thenBranch = Interpreter::getInstance().getCommands(it, end, isIfEnd);
-        // CR: 'then' not found?
+
+        if (it == end) {
+            throw interpreter_error("no 'then' for 'if'");
+        }
 
         if (std::string(it, it + 4) == "else") {
-            it = it + 5;
+            it += 5;
             elseBranch = Interpreter::getInstance().getCommands(it, end, isIfEnd);
         }
 
-        if (it + 4 == end) {
-            throw interpreter_error("no ';' for 'if'");
-        } else {
-            if (*(it + 5) != ';') {
-                throw interpreter_error("no ';' for 'if'");
-            }
+        if (it == end) {
+            throw interpreter_error("no 'then' for 'if'");
         }
 
-        it = it + 6;
+        it += 4;
+
+        if (it == end || it + 1 == end) {
+            throw interpreter_error("no ';' for 'if'");
+        }
+
+        if (*it != ' ') {
+            throw interpreter_error("no ';' for 'if'");
+        }
+
+        it++;
+        if (*it != ';') {
+            throw interpreter_error("no ';' for 'if'");
+        }
+
+        it++;
 
         return std::make_unique<If>(thenBranch, elseBranch);
     }
@@ -139,21 +151,22 @@ namespace {
 
         Interpreter::getInstance().registerCreator(iCreator, "i");
 
-        auto is_loop = [](const std::string &word) { return word == "loop"; };
-        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, end, is_loop);
+        auto isLoopEnd = [](const std::string &word) { return word == "loop"; };
 
-        Interpreter::getInstance().deRegisterCreator("i");
-        
+        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, end, isLoopEnd);
+
         if (it == end) {
-            throw interpreter_error("no 'loop' at the end of 'do'");
+            throw interpreter_error("no 'loop' for 'do'");
         }
 
-        // first after 'loop'
+        Interpreter::getInstance().deRegisterCreator("i");
+
         it += 4;
 
         if (it == end || it + 1 == end) {
             throw interpreter_error("no ';' for 'loop'");
         }
+
         if (*it != ' ') {
             throw interpreter_error("no ';' for 'loop'");
         }

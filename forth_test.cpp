@@ -6,637 +6,548 @@
 
 TEST(InterpretTest, WriteDigits) {
     std::string str = "985 4598 938 293 . . . .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.begin(), str.cend()).value() == "2939384598985");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.begin(), str.cend()).value() == "2939384598985");
 }
 
 TEST(InterpretTest, UnexistedCommand) {
     std::string str = "985 4598 give";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.begin(), str.cend()).error() == "no such command : 'give'");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.begin(), str.cend()).error() == "no such command : 'give'");
 }
 //Plus
 
 TEST(PlusTest, Sum) {
     std::string str = "100 154 + .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "254");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "254");
 }
 
 TEST(PlusTest, SumNegatives) {
     std::string str = "-100 154 + .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "54");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "54");
 }
 
 TEST(PlusTest, EmptyStack) {
     std::string str = "+";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(PlusTest, ExpectedSize) {
     std::string str = "1 +";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Minus
 
 TEST(MinusTest, NegativeResult) {
     std::string str = "100 154 - .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-54");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "-54");
 }
 
 TEST(MinusTest, PositiveResult) {
     std::string str = "200 154 - .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "46");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "46");
 }
 
 TEST(MinusTest, SubNegatives) {
-    std::string str = "-200 154 - .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-354");
+    std::string str = "-200 154 - . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "-354");
 }
 
 TEST(MinusTest, EmptyStack) {
     std::string str = "-";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(MinusTest, ExpectedSize) {
     std::string str = "1 -";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Mul
 
 TEST(MulTest, Mul) {
     std::string str = "100 154 * .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "15400");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "15400");
 }
 
 TEST(MulTest, MulNegatives) {
-    std::string str = "100 -154 * .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-15400");
+    std::string str = "100 -154 * . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "-15400");
 }
 
 TEST(MulTest, EmptyStack) {
     std::string str = "*";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(MulTest, ExpectedSize) {
-    std::string str = "1 *";
-    Interpreter &i = Interpreter::getInstance();
+    std::string str = "1 * drop";
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Div
 
 TEST(DivTest, Div1) {
     std::string str = "100 154 / .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(DivTest, Div2) {
     std::string str = "1000 154 / .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "6");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "6");
 }
 
 TEST(DivTest, DivNegatives) {
-    std::string str = "-1000 154 / .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "-6");
+    std::string str = "-1000 154 / . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "-6");
 }
 
 TEST(DivTest, EmptyStack) {
     std::string str = "/";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(DivTest, ExpectedSize) {
     std::string str = "1 /";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 TEST(DivTest, DivByZero) {
     std::string str = "1 0 /";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "division by zero");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "division by zero");
 }
 
 //Mod
 
 TEST(ModTest, Mod1) {
     std::string str = "100 154 mod .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "100");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "100");
 }
 
 TEST(ModTest, Mod2) {
     std::string str = "160 154 mod .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "6");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "6");
 }
 
 TEST(ModTest, Mod3) {
-    std::string str = "154 154 mod .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    std::string str = "154 154 mod . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(ModTest, EmptyStack) {
     std::string str = "mod";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(ModTest, ExpectedSize) {
     std::string str = "1 mod";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Equal
 
 TEST(EqualTest, Equal) {
     std::string str = "160 160 = .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
 TEST(EqualTest, EqualNegatives) {
     std::string str = "-160 -160 = .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
 TEST(EqualTest, NoEqualNegatives) {
     std::string str = "-160 160 = .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(EqualTest, NotEqual) {
-    std::string str = "154 1 mod .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    std::string str = "154 1 mod . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(EqualTest, EmptyStack) {
     std::string str = "=";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(EqualTest, ExpectedSize) {
     std::string str = "1 =";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Less
 
 TEST(LessTest, Less) {
     std::string str = "159 160 < .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
 TEST(LessTest, LessNegatives) {
     std::string str = "-159 160 < .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
 TEST(LessTest, NotLess1) {
     std::string str = "154 1 < .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(LessTest, NotLess2) {
-    std::string str = "1 1 < .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    std::string str = "1 1 < . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(LessTest, EmptyStack) {
     std::string str = "<";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(LessTest, ExpectedSize) {
     std::string str = "1 <";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Greater
 
 TEST(GreaterTest, Greater) {
     std::string str = "178 160 > .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
 TEST(GreaterTest, GreaterNegatives) {
     std::string str = "-178 160 > .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(GreaterTest, NotGreater1) {
     std::string str = "154 1888 > .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(GreaterTest, NotGreater2) {
-    std::string str = "1 1 > .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0");
+    std::string str = "1 1 > . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0");
 }
 
 TEST(GreaterTest, EmptyStack) {
     std::string str = ">";
-    Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'binary operation'");
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 0 elements, expected 2 for 'binary operation'");
 }
 
 TEST(GreaterTest, ExpectedSize) {
     std::string str = "1 >";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(
-            i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'binary operation'");
-    i.clearStack();
+            Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+            "stack has 1 elements, expected 2 for 'binary operation'");
 }
 
 //Dup
 
 TEST(DupTest, Dup) {
-    std::string str = "100 154 453 dup . cr .";
+    std::string str = "100 154 453 dup . cr . drop drop drop";
     Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "453\n453");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "453\n453");
 }
 
 TEST(DupTest, ExpectedSize) {
     std::string str = "dup";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for 'dup'");
-    i.clearStack();
 }
 
 //Drop
 
 TEST(DropTest, Drop) {
     std::string str = "100 154 453 drop .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "154");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "154");
 }
 
 TEST(DropTest, ExpectedSize) {
-    std::string str = "drop";
+    std::string str = "drop drop drop";
     Interpreter &i = Interpreter::getInstance();
     EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for 'drop'");
-    i.clearStack();
 }
 
 //Print
 
 TEST(PrintTest, Print) {
     std::string str = "100 154 453 .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "453");
-    str = ".";
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "154");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "453");
+    str = ". drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "154");
 }
 
 TEST(PrintTest, ExpectedSize) {
     std::string str = ".";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for '.'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 0 elements, expected 1 for '.'");
 }
 
 //Emit
 
 TEST(EmitTest, Emit) {
     std::string str = "100 154 65 emit";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()) == "A");
-    str = ".";
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "154");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()) == "A");
+    str = ". drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "154");
 }
 
 TEST(EmitTest, ExpectedSize) {
     std::string str = "emit";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for 'emit'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 0 elements, expected 1 for 'emit'");
 }
 
 //Swap
 
 TEST(SwapTest, Swap) {
-    std::string str = "100 154 65 swap . cr .";
-    Interpreter &i = Interpreter::getInstance();
-    i.interpret(str.cbegin(), str.cend());
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()) == "154\n65");
-    i.clearStack();
+    std::string str = "100 154 65 swap . cr . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()) == "154\n65");
 }
 
 TEST(SwapTest, ExpectedSize1) {
     std::string str = "swap";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'swap'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 0 elements, expected 2 for 'swap'");
 }
 
 TEST(SwapTest, ExpectedSize2) {
     std::string str = "1 swap";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'swap'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 1 elements, expected 2 for 'swap'");
 }
 
 //Rot
 
 TEST(RotTest, Rot) {
-    std::string str = "154 65 87 rot . cr . cr .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()) == "65\n154\n87");
+    std::string str = "154 65 87 rot . cr . cr . drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()) == "65\n154\n87");
 }
 
 TEST(RotTest, ExpectedSize1) {
     std::string str = "rot";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 3 for 'rot'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 0 elements, expected 3 for 'rot'");
 }
 
 TEST(RotTest, ExpectedSize2) {
     std::string str = "5 rot";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 3 for 'rot'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 1 elements, expected 3 for 'rot'");
 }
 
 TEST(RotTest, ExpectedSize3) {
-    std::string str = "9 5 rot";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 2 elements, expected 3 for 'rot'");
-    i.clearStack();
+    std::string str = "drop 9 5 rot";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 2 elements, expected 3 for 'rot'");
 }
 
 //Over
 
 TEST(OverTest, Over) {
-    std::string str = "100 154 65 87 over . cr . cr .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "65\n87\n65");
-    i.clearStack();
+    std::string str = "100 154 65 87 over . cr . cr . drop drop drop drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "65\n87\n65");
 }
 
 TEST(OverTest, ExpectedSize1) {
     std::string str = "over";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'over'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 0 elements, expected 2 for 'over'");
 }
 
 TEST(OverTest, ExpectedSize2) {
     std::string str = "1 over";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'over'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "stack has 1 elements, expected 2 for 'over'");
 }
 
 //Cr
 
 TEST(CrTest, EmptyStack) {
-    std::string str = "cr";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "\n");
-    i.clearStack();
+    std::string str = "drop cr";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "\n");
 }
 
 TEST(CrTest, Cr) {
     std::string str = "56 87 . cr .";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "87\n56");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "87\n56");
 }
 
 //PrintString
 
 TEST(PrintStringTest, PrintingString1) {
     std::string str = ".\" 98989\"";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "98989");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "98989");
 }
 
 TEST(PrintStringTest, PrintingString2) {
     std::string str = ".\" abcdef\"";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "abcdef");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "abcdef");
 }
 
 TEST(PrintStringTest, PrintingString3) {
     std::string str = ".\" abc def\"";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "abc def");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "abc def");
 }
 
 TEST(PrintStringTest, NoClosingQuote) {
     std::string str = ".\" abcdef";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no closing quotation mark for printing string");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "no closing quotation mark for printing string");
 }
 
 TEST(PrintStringTest, NoSpace) {
     std::string str = ".\"";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no space after '.\"'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() ==
+                "no closing quotation mark for printing string");
 }
 
 TEST(PrintStringTest, NoSuchCommand) {
     std::string str = "f.\"";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no such command : 'f.\"'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no such command : 'f.\"'");
 }
 
 //If
 
 TEST(IfTest, OnlyThenBranch1) {
     std::string str = "0 if 67 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value().empty() == 1);
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value().empty() == 1);
 }
 
 TEST(IfTest, OnlyThenBranch2) {
-    std::string str = "1 if 67 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "67");
-    i.clearStack();
+    std::string str = "drop 1 if 67 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "67");
 }
 
 TEST(IfTest, ElseBranch1) {
-    std::string str = "0 if 67 . else 89 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "89");
-    i.clearStack();
+    std::string str = "drop 0 if 67 . else 89 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "89");
 }
 
 TEST(IfTest, ElseBranch2) {
-    std::string str = "1 if 67 . else 78 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "67");
-    i.clearStack();
+    std::string str = "drop 1 if 67 . else 78 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "67");
 }
 
 TEST(IfTest, NestedIf1) {
-    std::string str = "0 if 1 if 43 . then ; 67 . else 89 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "89");
-    i.clearStack();
+    std::string str = "drop 0 if 1 if 43 . then ; 67 . else 89 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "89");
 }
 
 TEST(IfTest, NestedIf2) {
-    std::string str = "1 if 1 if 43 . then ; 67 . else 78 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "4367");
-    i.clearStack();
+    std::string str = "drop 1 if 1 if 43 . then ; 67 . else 78 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "4367");
 }
 
 TEST(IfTest, NestedIf3) {
-    std::string str = "0 if 67 . else 89 . 1 if 43 . then ; then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "8943");
-    i.clearStack();
+    std::string str = "drop drop 0 if 67 . else 89 . 1 if 43 . then ; then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "8943");
 }
 
 TEST(IfTest, NestedIf4) {
-    std::string str = "1 if 1 if 43 . then ; 67 . else 78 . 1 if 45 . then ; then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "4367");
-    i.clearStack();
+    std::string str = "drop drop 1 if 1 if 43 . then ; 67 . else 78 . 1 if 45 . then ; then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "4367");
 }
 
 TEST(IfTest, NestedIf5) {
-    std::string str = "1 if 0 if 43 . else 832 . then ; 67 . else 78 . 1 if 45 . then ; then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "83267");
-    i.clearStack();
+    std::string str = "drop drop 1 if 0 if 43 . else 832 . then ; 67 . else 78 . 1 if 45 . then ; then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "83267");
 }
 
-TEST(IfTest, NoColon) {
-    std::string str = "1 if 0 if 43 . else 832 then . 67 . else 78 . 1 if 45 . then ; then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no ';' for 'if'");
-    i.clearStack();
+TEST(IfTest, NoColon1) {
+    std::string str = "drop drop 1 if 0 if 43 . else 832 then . 67 . else 78 . 1 if 45 . then ; then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no ';' for 'if'");
+}
+
+TEST(IfTest, NoColon2) {
+    std::string str = "drop drop 1 if 0 if 43 . else 832 then ; . 67 . else 78 . 1 if 45 . then ; then";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no ';' for 'if'");
+}
+
+TEST(IfTest, NoThen) {
+    std::string str = " 1 if 0 if 43 . else 832 then ; . 67 . else 78 . 1 if 45 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no 'then' for 'if'");
 }
 
 TEST(IfTest, ExpectedSize) {
-    std::string str = "if 78 . then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for 'if'");
-    i.clearStack();
+    std::string str = "drop drop if 78 . then ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 1 for 'if'");
 }
 
 //Loop
 
 TEST(LoopTest, PrintingNumbers) {
     std::string str = "10 0 do i . loop ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0123456789");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0123456789");
 }
 
 TEST(LoopTest, LoopInIf) {
-    std::string str = "1 if 10 0 do i . loop ; then ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "0123456789");
-    i.clearStack();
+    std::string str = "1 if 10 0 do i . loop ; then ; drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "0123456789");
 }
 
 TEST(LoopTest, LoopOutIf) {
-    std::string str = "10 0 do i 1 = if i . then ; loop ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "1");
-    i.clearStack();
+    std::string str = "10 0 do i 1 = if i . then ; loop ; drop drop drop drop drop drop drop drop";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "1");
 }
 
-TEST(LoopTest, NoColon) {
+TEST(LoopTest, NoColon1) {
     std::string str = "10 0 do i 1 = if i . then ; loop";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "no ';' for 'loop'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no ';' for 'loop'");
+}
+
+TEST(LoopTest, NoColon2) {
+    std::string str = "10 0 do i . 12 11 do i . loop loop ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no ';' for 'loop'");
+}
+
+TEST(LoopTest, NoLoop) {
+    std::string str = "10 0 do i . 12 11 do i . loop ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "no 'loop' for 'do'");
 }
 
 TEST(LoopTest, ExpectedSize1) {
-    std::string str = "do i 78 . loop ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'loop'");
-    i.clearStack();
+    std::string str = "drop drop do i 78 . loop ;";
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "stack has 0 elements, expected 2 for 'loop'");
 }
 
 TEST(LoopTest, ExpectedSize2) {
     std::string str = "1 do i 78 . loop ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'loop'");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).error() == "stack has 1 elements, expected 2 for 'loop'");
 }
 
 TEST(LoopTest, NestedLoop) {
     std::string str = "10 0 do i . 12 11 do i . loop ; loop ;";
-    Interpreter &i = Interpreter::getInstance();
-    EXPECT_TRUE(i.interpret(str.cbegin(), str.cend()).value() == "011111211311411511611711811911");
-    i.clearStack();
+    EXPECT_TRUE(Interpreter::getInstance().interpret(str.cbegin(), str.cend()).value() == "011111211311411511611711811911");
 }

@@ -7,7 +7,7 @@ void PushDigit::apply(context &cntx) const {
 }
 
 void I::apply(context &cntx) const {
-    cntx.stack.push(cntx.start);
+    cntx.stack.push(cntx.iteration);
 }
 
 void ParseString::apply(context &cntx) const {
@@ -146,15 +146,15 @@ void Loop::apply(context &cntx) const {
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();
 
-    int old = cntx.start;
-    cntx.start = start;
+    int old = cntx.iteration;
+    cntx.iteration = start;
 
     for (int i = start; i < end; i++) {
         for (auto &cmd: loopBody_) {
             cmd->apply(cntx);
         }
-        cntx.start= i + 1;
+        cntx.iteration= i + 1;
     }
 
-    cntx.start=old;
+    cntx.iteration=old;
 }
