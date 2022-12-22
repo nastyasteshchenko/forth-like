@@ -109,6 +109,7 @@ namespace {
         std::vector<std::unique_ptr<Command>> elseBranch;
 
         thenBranch = Interpreter::getInstance().getCommands(it, end, isIfEnd);
+        // CR: 'then' not found?
 
         if (std::string(it, it + 4) == "else") {
             it = it + 5;
@@ -130,10 +131,6 @@ namespace {
 
     bool ifOp = Interpreter::getInstance().registerCreator(ifCreator, "if");
 
-    bool isLoopEnd(const std::string &word) {
-        return word == "loop";
-    }
-
     std::unique_ptr<Command> iCreator(std::string::const_iterator &, const std::string::const_iterator &) {
         return std::make_unique<I>();
     }
@@ -142,19 +139,31 @@ namespace {
 
         Interpreter::getInstance().registerCreator(iCreator, "i");
 
-        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, end, isLoopEnd);
+        auto is_loop = [](const std::string &word) { return word == "loop"; };
+        std::vector<std::unique_ptr<Command>> loopBody = Interpreter::getInstance().getCommands(it, end, is_loop);
 
         Interpreter::getInstance().deRegisterCreator("i");
-
-        if (it + 4 == end) {
-            throw interpreter_error("no ';' for 'loop'");
-        } else {
-            if (*(it + 5) != ';') {
-                throw interpreter_error("no ';' for 'loop'");
-            }
+        
+        if (it == end) {
+            throw interpreter_error("no 'loop' at the end of 'do'");
         }
 
-        it = it + 6;
+        // first after 'loop'
+        it += 4;
+
+        if (it == end || it + 1 == end) {
+            throw interpreter_error("no ';' for 'loop'");
+        }
+        if (*it != ' ') {
+            throw interpreter_error("no ';' for 'loop'");
+        }
+
+        it++;
+        if (*it != ';') {
+            throw interpreter_error("no ';' for 'loop'");
+        }
+
+        it++;
 
         return std::make_unique<Loop>(loopBody);
     }

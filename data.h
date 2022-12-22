@@ -5,6 +5,7 @@
 #include <stack>
 #include <cassert>
 
+// CR: data -> data_stack
 class data {
 public:
 
@@ -50,8 +51,11 @@ private:
 
 struct context {
 
+    context(data & stack): stack(stack) {}
+
     data &stack;
     std::stringstream out;
-    int start;
+    // CR: start -> iteration
+    int start = 0;
 
 };

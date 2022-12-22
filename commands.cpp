@@ -36,6 +36,9 @@ int Mul::applyBinOp(const int a, const int b) const {
 }
 
 int Mod::applyBinOp(const int a, const int b) const {
+    if (a == 0) {
+        throw interpreter_error("division by zero");
+    }
     return b % a;
 }
 
@@ -73,7 +76,7 @@ void Drop::apply(context &cntx) const {
 void Print::apply(context &cntx) const {
     cntx.stack.expectSize(1, ".");
 
-    cntx.out << std::to_string(cntx.stack.top()).c_str();
+    cntx.out << cntx.stack.top();
     cntx.stack.pop();
 }
 
@@ -143,6 +146,7 @@ void Loop::apply(context &cntx) const {
     int start = cntx.stack.pop();
     int end = cntx.stack.pop();
 
+    int old = cntx.start;
     cntx.start = start;
 
     for (int i = start; i < end; i++) {
@@ -152,5 +156,5 @@ void Loop::apply(context &cntx) const {
         cntx.start= i + 1;
     }
 
-    cntx.start=0;
+    cntx.start=old;
 }

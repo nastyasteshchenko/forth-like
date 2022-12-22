@@ -35,9 +35,10 @@ Interpreter::getCommands(std::string::const_iterator &it, const std::string::con
         }
 
         if (isStringStart(word)) {
-            if (std::isspace(*word_end)) {
+            if (word_end != end && std::isspace(*word_end)) {
                 it = ++word_end;
             } else {
+                // CR: closing quote message
                 throw interpreter_error("no space after '.\"'");
             }
             std::string content = getStringContent(it, end);
@@ -73,8 +74,7 @@ bool isEnd(const std::string &) {
 
 std::expected<std::string, std::string>
 Interpreter::interpret(const std::string::const_iterator &begin, const std::string::const_iterator &end) {
-    std::stringstream out;
-    context cntx = {stack_, std::move(out), 0};
+    context cntx = {stack_};
 
     try {
         auto it = begin;
@@ -124,6 +124,7 @@ bool Interpreter::isDigit(std::string str) {
     return str.find_first_not_of("0123456789") == std::string::npos;
 }
 
+// CR: remove
 void Interpreter::clearStack() {
     while (stack_.size() != 0) {
         stack_.pop();

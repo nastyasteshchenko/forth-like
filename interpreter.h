@@ -16,7 +16,6 @@ public:
                                                    const std::string::const_iterator &)> creator_t;
 
     //creates a single instance of the class
-    //returns a single instance of the class
     static Interpreter &getInstance();
 
     //registers commands

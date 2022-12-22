@@ -22,7 +22,7 @@ public:
 class ParseString : public Command {
 public:
 
-    ParseString(std::string str) : content_(std::move(str)) {};
+    explicit ParseString(std::string str) : content_(std::move(str)) {};
 
     //prints the string between the quotes
     void apply(context &) const override;
@@ -34,7 +34,7 @@ private:
 class PushDigit : public Command {
 public:
 
-    PushDigit(int val) : val_(val) {};
+    explicit PushDigit(int val) : val_(val) {};
 
     //puts a digit on the top of the stack
     void apply(context &) const override;
