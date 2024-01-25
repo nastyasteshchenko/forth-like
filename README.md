@@ -1,3 +1,8 @@
+# HOW TO RUN:  
+cmake .  
+make  
+./forth  
+
 # LAB2 FORTH-LIKE INTERPRETER  
 
 Write a language interpreter that supports some of the functionality of the Forth language
