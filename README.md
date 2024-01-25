@@ -54,3 +54,13 @@ Two formats are supported:
 If there is 0 on the stack, then nothing happens, if any other number, then THEN_BRANCH is executed.A semicolon after the command is required
 2)  if THEN_BRANCH else ELSE_BRANCH then ;
 If 0 is on the stack, then ELSE_BRANCH is executed, if any other number, then THEN_BRANCH is executed. A semicolon after the command is required
+
+**Requirements**
+
+*  The code should be covered with tests https://github.com/google/googletest
+*  Public methods should be documented (in English)
+*  The program should be built using cmake
+*  There should be no memory leaks in the program
+*  Command instances should be wrapped in smart pointers
+*  Custom exceptions must be defined in the program
+*  It is recommended to use standard collections (std::map, std::stack...)
