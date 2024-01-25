@@ -14,7 +14,7 @@ Write a language interpreter that supports some of the functionality of the Fort
 Only integers are supported, the boundaries of the number coincide with the boundaries of the int type in C++ on your platform
 
 When a number is fed to the interpreter, the number is put on the stack:  
-> > 3
+> \> 3  
 > < ok
 
 ***Arithmetic operations***
