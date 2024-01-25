@@ -1,7 +1,7 @@
 # HOW TO RUN:  
-cmake .  
-make  
-./forth  
+> cmake .  
+> make  
+> ./forth  
 
 # LAB2 FORTH-LIKE INTERPRETER  
 
